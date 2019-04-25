@@ -1,0 +1,30 @@
+import Vue from 'vue'
+import App from './App.vue'
+import router from './router/index'
+import store from './store/index'
+import config from '@/config'
+import Vant from 'vant';
+import 'vant/lib/index.css';
+import VueCountdown from '@/plugins/vue-countdown';
+import { Lazyload } from 'vant';
+
+Vue.use(VueCountdown);//验证码倒计时
+// options 为可选参数，无则不传
+Vue.use(Lazyload);
+
+Vue.use(Vant);
+
+Vue.config.productionTip = false
+
+
+/**
+ * @description 全局注册应用配置 add by andy 2019-04-22  
+ */
+Vue.prototype.$config = config
+
+
+new Vue({
+  router,
+  store,
+  render: h => h(App)
+}).$mount('#app')

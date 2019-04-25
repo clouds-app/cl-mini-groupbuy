@@ -1,0 +1,113 @@
+<template>
+  <div>
+   <back-arrow title="用户登录"/>
+  <van-cell-group>
+    <van-field
+      v-model="form.username"
+      required
+      clearable
+      left-icon="contact"
+      label="用户名"
+      right-icon="question-o"
+      placeholder="请输入用户名"
+      @click-right-icon="$toast('请输入用户名')"
+    />
+    <van-field
+      ref="password"
+      v-model="form.password"
+      left-icon="lock"
+      type="password"
+      label="密码"
+      placeholder="请输入密码"
+      @click-right-icon="$toast('请输入密码')"
+      required
+    />
+</van-cell-group>
+  <div class="form-group">
+ <van-button :loading='isLoding' style="margin-right:10px;width:300px;" round type="info" @click="handleSubmit">登 录</van-button>
+  <!-- <van-button   style="margin-right:10px" type="default" @click="resetInput">重 置</van-button> -->
+  </div>
+ 
+   <div class="aui-account-link">
+			<a @click="HandleRedirect('register')" href="javascript:;">注册账号</a>&nbsp;&nbsp;&nbsp;&nbsp;
+			<a href="javascript:;">忘记密码</a>
+		</div>
+</div>
+</template>
+<script>
+import common_mix from '@/views/mixins/common';
+import BackArrow from '_c/back-arrow'
+export default {
+  name: 'LoginForm',
+  mixins:[common_mix],
+  components:{
+    BackArrow
+  },
+  props: {
+     isLoding:{
+       type:Boolean,
+       default:false
+     }
+  },
+  data () {
+    return {
+      //loginLoding:false,
+      form: {
+        username: '',
+        password: ''
+      }
+    }
+  },
+  computed: {
+  
+  },
+  methods: {
+    handleSubmit () {
+      //debugger
+        if(this.checkInput())
+        {
+         this.$emit('on-success-login-valid', {
+            username: this.form.username,
+            password: this.form.password
+          })
+        }
+       
+    },
+    checkInput()
+    {
+       let flag= true;
+       if(this.form.username.length==0)
+       {
+         this.showErrorNotify("请输入用户名");
+         flag= false
+       }
+       else if(this.form.password.length==0)
+       {
+         this.showErrorNotify("请输入密码");
+         flag= false
+       }
+       return flag;
+    },
+    resetInput(){
+      this.form.username="";
+      this.form.password="";
+    }
+    
+  }
+
+}
+</script>
+
+<style scoped>
+
+.aui-account-link {
+    padding-top: 10px;
+    text-align: center;
+}
+  .form-group{
+    margin: 20px;
+  }
+  .van-cell {
+    text-align: left;
+  }
+</style>

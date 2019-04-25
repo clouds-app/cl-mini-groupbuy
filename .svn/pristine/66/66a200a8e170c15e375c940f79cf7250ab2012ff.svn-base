@@ -1,0 +1,25 @@
+<template>
+    <div>
+        {{this.$route.query.id}}
+    </div>
+</template>
+<script>
+import {mapGetters} from 'vuex'
+export default {
+    name:'goods-detail',
+    data(){
+        return {
+            goodsId:this.$route.query.id,
+            goodsList:{},
+            goodsItem:{},
+        }
+    },
+    computed:{
+      // ...mapGetters(['']) 
+    },
+    mounted(){
+        this.goodsList =this.$store.getters.goods.doneTodosCount
+    }
+    
+}
+</script>

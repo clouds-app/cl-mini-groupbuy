@@ -1,7 +1,7 @@
 <template>
     <div id="app">
     <router-view/>
-    <footer-menu/>
+    <footer-menu  v-if="!$route.meta.footer"/>
   </div>
 </template>
 <script>

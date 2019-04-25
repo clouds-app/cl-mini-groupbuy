@@ -64,9 +64,17 @@ export default [
     path: '/goodslist',
     name: 'goodslist',
     meta:{
-     
+     // keepAlive: true, //此组件需要被缓存 //默认为FALSE 其他可用不用设置
     },
     component: () => import(/* webpackChunkName: "AddressList" */ '@/views/GoodsList/GoodsList.vue')
+  },
+  {
+    path: '/goodsdetail',
+    name: 'goodsdetail',
+    meta:{
+      footer:true  //默认为FALSE 其他可用不用设置
+    },
+    component: () => import(/* webpackChunkName: "GoodsDetail" */ '@/views/GoodsDetail.vue')
   },
   {
     path: '/addresslist',
