@@ -8,5 +8,6 @@
        <van-tabbar-item icon="chat" to="/register">注册</van-tabbar-item>-->
        <van-tabbar-item icon="chat" to="/goodslist">商品</van-tabbar-item> 
        <van-tabbar-item icon="chat" to="/category">分类</van-tabbar-item>
+       <van-tabbar-item icon="chat" to="/flashsale">抢购</van-tabbar-item> 
     </van-tabbar>
 </template>

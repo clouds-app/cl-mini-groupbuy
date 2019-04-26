@@ -1,63 +1,97 @@
 <template>
   <div>
-     <back-arrow title="产品列表" />
-     <Scroll
-            class="scroll"
-            :bounce="bounce"
-            ref="scroll"
-            :pullup="true"
-            @scrollToEnd="scrollToEnd"
-        >
-     <goods-item :dataSource="goodsDataList"/>
-     </Scroll>
-     <van-pagination 
-            v-model="pageConfig.pageNumber" 
-            :total-items="pageConfig.totalItems" 
-            :show-page-size="pageConfig.pageSize" 
-            force-ellipses
-            v-if="showPageOrNot"
-            /> 
+    <back-arrow title="产品列表"/>
+    <van-pull-refresh v-model="list[0].refreshing" @refresh="onRefresh(0)">
+      <van-list
+        v-model="list[0].loading"
+        :finished="list[0].finished"
+        :finished-text="finishedText"
+        @load="onLoad(0)"
+      >
+        <goods-item :dataSource="goodsDataList"/>
+        <van-pagination
+          v-model="pageConfig.pageNumber"
+          :total-items="pageConfig.totalItems"
+          :show-page-size="pageConfig.pageSize"
+          force-ellipses
+          v-if="showPageOrNot"
+        />
+      </van-list>
+    </van-pull-refresh>
   </div>
 </template>
 
 <script>
-import BackArrow from '_c/back-arrow'
+import BackArrow from "_c/back-arrow";
 import GoodsItem from "_c/goods-item";
 import Scroll from "_c/scroll";
+import { mapGetters } from "vuex";
 export default {
   name: "goods-list",
-  props: {
-    
-    // dataSource: {},
-    // dataFrom: {
-    //   type: String,
-    //   default: "self"
-    // }
-  },
+  props: {},
   components: {
-    GoodsItem,BackArrow,Scroll
+    GoodsItem,
+    BackArrow,
+    Scroll
   },
   data() {
     return {
-      showPageOrNot:false,
+      finishedText: "", //-------没有更多了-------
+      list: [
+        {
+          items: [],
+          refreshing: false,
+          loading: false,
+          error: false,
+          finished: false
+        }
+      ],
+      showPageOrNot: false,
       goodsDataList: this.dataSource,
       showToastLoading: false,
       pageConfig: {
         pageNumber: 1,
-        pageSize: 5,
+        pageSize: 10,
         totalItems: 0
-      },
-      bounce: {
-                bottom: true
-            },
+      }
     };
   },
+  computed: {
+    ...mapGetters(["getGoodsListByPages_pageSetting"])
+    //使用对象展开运算符将 getter 混入 computed 对象中
+    // ...mapGetters(
+    // {
+    //    //如果你想将一个 getter 属性另取一个名字，使用对象形式：
+    //    // 把 `this.pageSetting` 映射为 `this.$store.getters.getGoodsListByPages_pageSetting`
+    //   //'pageSetting':'getGoodsListByPages_pageSetting'
+    // })
+  },
   methods: {
-    scrollToEnd() {
-            setTimeout(() => {
-                this.$refs.scroll.refresh();
-            }, 20);
-        },
+    onLoad(index) {
+      const list = this.list[index];
+      setTimeout(() => {
+        //LIST
+        if (index == 0) {
+          Array.from(this.goodsDataList).map(goodsItem => {
+            list.items.push(goodsItem);
+          });
+          list.loading = false;
+          if (list.items.length >= Array.from(this.goodsDataList).length) {
+            list.finished = true;
+          }
+        }
+      }, 500);
+    },
+    onRefresh(index) {
+      const list = this.list[index];
+      setTimeout(() => {
+        list.items = [];
+        list.error = false;
+        list.finished = false;
+        list.refreshing = false;
+        window.scrollTo(0, 10);
+      }, 1000);
+    },
     getGoodsList() {
       if (true) {
         //debugger;
@@ -66,20 +100,20 @@ export default {
           pageNumber: this.pageConfig.pageNumber,
           pageSize: this.pageConfig.pageSize
         };
-        this.showLoadingToast();
-        let self=this;
+        //this.showLoadingToast();
+        let self = this;
         this.$store
           .dispatch("getGoodsListByPages", params)
           .then(res => {
-             //console.warn("获取分类商品: "+JSON.stringify(res.records));
+            //console.warn("获取分类商品: "+JSON.stringify(res.records));
             self.goodsDataList = res.records; //绑定所有分页产品
-            self.initPageSetting(res);
+            //self.initPageSetting(res);
             self.showPageOrNot = true;
-            self.showToastLoading.clear();
+            // self.showToastLoading.clear();
           })
           .catch(err => {
-            self.showErrorNotify(err);
-            self.showToastLoading.clear();
+            this.showErrorNotify(err);
+            //self.showToastLoading.clear();
           });
       }
     },
@@ -89,38 +123,29 @@ export default {
         mask: true,
         message: "加载中..."
       });
-    },
-    //初始化分页设置
-    initPageSetting(responseData) {
-      this.pageConfig.pageNumber = responseData.current;
-      this.pageConfig.pageSize = responseData.size;
-      this.pageConfig.totalItems = responseData.total;
     }
   },
   created() {
-     this.getGoodsList();
+    this.getGoodsList();
   },
-  updated() {
-    //console.log("商品列表数据updated-goods-list："+JSON.stringify(this.dataSource));
+  updated() {},
+  beforeMount() {
+    let pageSetting = Object.assign({}, this.getGoodsListByPages_pageSetting);
+    this.pageConfig.pageNumber = pageSetting.current;
+    //this.pageConfig.pageSize =pageSetting.size;
+    this.pageConfig.totalItems = pageSetting.total;
+    console.warn(this.pageConfig);
   },
   mounted() {
-    this.$nextTick(() => {
-     
-    });
+    this.$nextTick(() => {});
   }
 };
 </script>
 
 
 <style lang="less">
-.scroll {
-    // position: fixed;
-    // top: 0px;
-    // bottom: 50px;
-    // left: 0;
-    // right: 0;
-    height: 500px;
-    overflow: scroll;
-}
+//  .tt {
+//    border:green solid  1px;
+//  }
 </style>
 

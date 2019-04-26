@@ -1,171 +1,208 @@
 <template>
-    <div>
-        <back-arrow title="分类"/>
-        <van-tabs v-model="currentActive" @click="onClickByCategory">
-               <van-tab v-for="(item) in categoryList"  :key="item.id1" :title="item.name">
-                   <Scroll
-                    class="scroll"
-                    :bounce="bounce"
-                    ref="scroll"
-                    :pullup="true"
-                    @scrollToEnd="scrollToEnd"
-                   >
-                  <goods-item :dataSource="goodsDataList"/>
-                   </Scroll>
-               </van-tab>
-        </van-tabs>
-        <van-pagination 
-            v-model="pageConfig.pageNumber" 
-            :total-items="pageConfig.totalItems" 
-            :show-page-size="pageConfig.pageSize" 
-            force-ellipses
-            v-if="showPageOrNot"
-            /> 
-     
-    </div>
+  <div>
+    <back-arrow title="分类"/>
+    <van-tabs v-model="currentActive" @click="onClickByCategory">
+      <van-tab v-for="(item) in categoryList" :key="item.id1" :title="item.name">
+        <van-pull-refresh v-model="list[0].refreshing" @refresh="onRefresh(0)">
+          <van-list
+            v-model="list[0].loading"
+            :finished="list[0].finished"
+            :finished-text="finishedText"
+            @load="onLoad(0)"
+          >
+            <goods-item :dataSource="goodsDataList" :dataFrom="dataFrom"/>
+            <van-pagination
+              v-model="pageConfig.pageNumber"
+              :total-items="pageConfig.totalItems"
+              :show-page-size="pageConfig.pageSize"
+              force-ellipses
+              v-if="showPageOrNot"
+            />
+          </van-list>
+        </van-pull-refresh>
+      </van-tab>
+    </van-tabs>
+  </div>
 </template>
 <script>
-import BackArrow from '_c/back-arrow'
+import BackArrow from "_c/back-arrow";
 import { mapGetters, mapActions } from "vuex";
-import common_mix from '@/views/mixins/common';
+import common_mix from "@/views/mixins/common";
 import Scroll from "_c/scroll";
 import GoodsItem from "_c/goods-item";
+import * as type from "@/Enums";
 export default {
-    name: 'Category',
-    mixins:[common_mix],
-    data() {
-        return {
-           category:"category",
-           backArrowTitle:"分类",
-           showPageOrNot:false,
-           showToastLoading:{},
-           currentActive: 0,
-           goodsDataList:{},
-           goodsType:-1, 
-           pageConfig:{
-                 pageNumber:1, 
-                 pageSize:10,
-                 totalItems:0,
-           },
-           categoryList: {},
-          bounce: {
-                bottom: true
-            },
-        };
-    },
-    computed:{
-        ...mapGetters(
+  name: "Category",
+  mixins: [common_mix],
+  data() {
+    return {
+      finishedText: "", //-------没有更多了-------
+      list: [
         {
-           //如果你想将一个 getter 属性另取一个名字，使用对象形式：
-           // 把 `this.doneCount` 映射为 `this.$store.getters.doneTodosCount`
-          //showCategoryList:'getGoodsTypeList',
+          items: [],
+          refreshing: false,
+          loading: false,
+          error: false,
+          finished: false
         }
-      )
-    },
-    components: {
-        BackArrow,GoodsItem,Scroll
-    },
-    methods: {
-          ...mapActions(['getGoodsTypeList']),
-          scrollToEnd() {
-                setTimeout(() => {
-                    this.$refs.scroll.refresh();
-                }, 20);
-            },
-          //切换类别获取商品列表
-          onClickByCategory(index) {
-            //alert(index)
-            this.goodsType = this.categoryList[index].id1; //获取类型
-         
-            if(this.goodsType!=null && this.goodsType!=""){
-               
-                this.getGoodsListByCategory(this.goodsType)
-            }
-           
-        },
-        //获取所有分类
-        getAllCategory(){
-            //等同于： this.$store.dispatch('getGoodsTypeList')
-            this.categoryList= {};
-            this.getGoodsTypeList().then(res=>{
-              this.categoryList=res;//绑定分类
-             //初始化第一个分类的商品列表 
-              if(this.categoryList[0]!=null && this.categoryList[0].id1!="")
-              {    // alert(this.categoryList[0].id1);
-                    this.getGoodsListByCategory(this.categoryList[0].id1)
-              }
-              //alert(this.goodsDataList);
-            }).catch(err=>{
-              this.showErrorNotify(err);
-            })
-        },
-        //获取分类商品
-        getGoodsListByCategory(goodsType){
-           // debugger
-           this.goodsDataList = {};
-            let params = {
-                goodsType:1, //测试暂时设置为1
-                pageNumber:this.pageConfig.pageNumber, 
-                pageSize:this.pageConfig.pageSize
-              }
-              this.showLoadingToast()
-              let self=this;
-            this.$store.dispatch('getGoodsListByType',params).then((res)=>{
-                    // console.warn("获取分类商品: "+JSON.stringify(res.records));
-                     self.goodsDataList =res.records//绑定分类产品
-                     self.initPageSetting(res);
-                     self.showPageOrNot=true;
-                     self.showToastLoading.clear()
-                }).catch(err=>{
-                     self.showErrorNotify(err);
-                    self.showToastLoading.clear()
-                });
-        },
-        //数据加载提示
-        showLoadingToast() {
-                           this.showToastLoading= this.$toast.loading({ mask: true, message: "加载中..." });
-        },
-        //初始化分页设置
-        initPageSetting(responseData){
-                this.pageConfig.pageNumber = responseData.current;
-                this.pageConfig.pageSize = responseData.size;
-                this.pageConfig.totalItems = responseData.total;
+      ],
+      dataFrom: type.dataFrom_category,
+      category: "category",
+      backArrowTitle: "分类",
+      showPageOrNot: false,
+      showToastLoading: {},
+      currentActive: 0,
+      goodsDataList: {},
+      goodsType: -1,
+      pageConfig: {
+        pageNumber: 1,
+        pageSize: 10,
+        totalItems: 0
+      },
+      categoryList: {},
+      bounce: {
+        bottom: true
+      }
+    };
+  },
+  computed: {
+    ...mapGetters(["getGoodsListByType_pageSetting"])
+    //使用对象展开运算符将 getter 混入 computed 对象中
+    // ...mapGetters(
+    // {
+    //    //如果你想将一个 getter 属性另取一个名字，使用对象形式：
+    //    // 把 `this.doneCount` 映射为 `this.$store.getters.doneTodosCount`
+    //   //showCategoryList:'getGoodsTypeList',
+    // })
+  },
+  components: {
+    BackArrow,
+    GoodsItem,
+    Scroll
+  },
+  methods: {
+    ...mapActions(["getGoodsTypeList"]),
+    onLoad(index) {
+      const list = this.list[index];
+      setTimeout(() => {
+        //LIST
+        if (index == 0) {
+          Array.from(this.goodsDataList).map(goodsItem => {
+            list.items.push(goodsItem);
+          });
+          list.loading = false;
+          if (list.items.length >= Array.from(this.goodsDataList).length) {
+            list.finished = true;
+          }
         }
+      }, 500);
+    },
+    onRefresh(index) {
+      const list = this.list[index];
+      setTimeout(() => {
+        list.items = [];
+        list.error = false;
+        list.finished = false;
+        list.refreshing = false;
+        window.scrollTo(0, 10);
+      }, 1000);
+    },
+    //切换类别获取商品列表
+    onClickByCategory(index) {
+      //alert(index)
+      this.goodsType = this.categoryList[index].id1; //获取类型
 
+      if (this.goodsType != null && this.goodsType != "") {
+        this.getGoodsListByCategory(this.goodsType);
+      }
     },
-    updated(){
-        //console.warn(JSON.stringify(this.categoryList));
-    },
-    created(){
-        //初始化获取分类
-          let init= this.getAllCategory()
-         
-    },
-    mounted(){
-        this.$nextTick(()=>{
+    //获取所有分类
+    getAllCategory() {
+      //等同于： this.$store.dispatch('getGoodsTypeList')
+      this.categoryList = {};
+      this.getGoodsTypeList()
+        .then(res => {
+          this.categoryList = res; //绑定分类
+          //初始化第一个分类的商品列表
+          if (this.categoryList[0] != null && this.categoryList[0].id1 != "") {
+            // alert(this.categoryList[0].id1);
+            this.getGoodsListByCategory(this.categoryList[0].id1);
+          }
+          //alert(this.goodsDataList);
         })
+        .catch(err => {
+          this.showErrorNotify(err);
+        });
+    },
+    //获取分类商品
+    getGoodsListByCategory(goodsType) {
+      //debugger
+      this.goodsDataList = {};
+      let params = {
+        goodsType: 1, //测试暂时设置为1
+        pageNumber: this.pageConfig.pageNumber,
+        pageSize: this.pageConfig.pageSize
+      };
+      // this.showLoadingToast()
+      let self = this;
+      this.$store
+        .dispatch("getGoodsListByType", params)
+        .then(res => {
+          // console.warn("获取分类商品: "+JSON.stringify(res.records));
+          self.goodsDataList = res.records; //绑定分类产品
+
+          self.showPageOrNot = true;
+          // self.showToastLoading.clear()
+        })
+        .catch(err => {
+          //alert(err)
+          this.showErrorNotify(err);
+          //self.showToastLoading.clear()
+        });
+    },
+    //数据加载提示
+    showLoadingToast() {
+      this.showToastLoading = this.$toast.loading({
+        mask: true,
+        message: "加载中..."
+      });
     }
+  },
+  updated() {
+    //console.warn(JSON.stringify(this.categoryList));
+  },
+  created() {
+    //初始化获取分类
+    let init = this.getAllCategory();
+  },
+  beforeMount() {
+    let pageSetting = Object.assign({}, this.getGoodsListByType_pageSetting);
+    this.pageConfig.pageNumber = pageSetting.current;
+    //this.pageConfig.pageSize =pageSetting.size;
+    this.pageConfig.totalItems = pageSetting.total;
+
+    console.warn(this.pageConfig);
+  },
+  mounted() {
+    this.$nextTick(() => {});
+  }
 };
 </script>
 
 <style scoped>
-.scroll {
-    height: 400px;
-    overflow: scroll;
-}
 .category {
-    position: fixed;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
 }
-.content {
+/* .content {
     display: flex;
     position: fixed;
     top: 39px;
     left: 0;
     right: 0;
     bottom: 0;
-}
+} */
 </style>

@@ -61,12 +61,6 @@ export default [
     component: () => import(/* webpackChunkName: "Category" */ '@/views/Category/Category.vue')
   },
   {
-    path: '/flashsale',
-    name: 'flashsale',
-  
-    component: () => import(/* webpackChunkName: "FlashSale" */ '@/views/FlashSale/FlashSale.vue')
-  },
-  {
     path: '/goodslist',
     name: 'goodslist',
     meta:{

@@ -2,12 +2,12 @@
     <div>
          <!-- origin-price="10.00"  num="2" -->
         <van-card v-for="goods in dataSource" :key="goods.id1"
-        :price="goods.price"
-        :tag="goods.tag"
+        :price="goods.goodsPrice"
+        :tag="ProductTag"
         :desc="goods.goodsDesc"
         :title="goods.goodsName"
         :thumb="imageURL"
-        @click="handleGoodsDetail(goods.id1)"
+        @click="handleGoodsDetail(goods)"
       >
         <!-- <div slot="tags" class="card__tags">
           <van-tag plain type="danger">标签1</van-tag>
@@ -29,15 +29,19 @@
 </template>
 
 <script>
+import * as type from '@/Enums'
 export default {
     name:'goods-item',
     props:{
-      dataSource:{
-      
-      }
+      dataSource:{},
+      dataFrom:{
+        type:String,
+        default:type.dataFrom_goodsList
+      }//rusnNow,rushAfter,goodsList,category
     },
     data(){
         return {
+           ProductTag:'抢购',
             pageConfig:{
                  pageNumber:1, 
                  pageSize:10,
@@ -53,11 +57,18 @@ export default {
          }
     },
     methods:{
-      handleGoodsDetail(goodsId){
+      handleGoodsDetail(goods){
+        //debugger
+        let goodsId =goods.id1;
+         if(goodsId==null || goodsId=="")
+          {
+            goodsId =goods.goodsId
+          }
        this.$router.push({
         path:'/goodsdetail',
         query:{
-          id:goodsId
+          id:goodsId,
+          type:this.dataFrom
         }
       })
       }
@@ -74,7 +85,18 @@ export default {
 </script>
 
 
-<style lang="less">
+<style lang="less" scope>
+//   .van-card__title {
+//       color: #505050;
+//       font-size: 14px;
+//       text-align: justify;
+//       font-weight: 800;
+//   }
+//   .van-card__price {
+//     color: #ef4f4f;
+//     font-size: 15px;
+//     font-weight: 600;
+// }
     .van-card {
         text-align: left;
     }
