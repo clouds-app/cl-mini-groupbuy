@@ -1,6 +1,6 @@
 //验证数字
 export const IsNumber = (value)=>{
-  var reg = '^[0-9]*$'
+  var reg = '^[0-9]*$/'
   let flag =true;
   if (!reg.test($(value).val())) {
     flag =false;

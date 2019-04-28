@@ -18,7 +18,7 @@
 
             <!-- <van-panel title="简要描述：" desc="可以单独使用，也可以与CellGroup搭配使用。CellGroup可以为Cell提供上下外边框。" >
             </van-panel> -->
-           <!-- <van-cell title="商品规格" :value="goodsItem.goodsSpec" /> -->
+           <van-cell title="商品规格" :value="goodsItem.goodsSpec" />
             <van-cell title="送货区域" :value="goodsItem.deliveryArea" />
         </van-cell-group>
 
@@ -26,7 +26,6 @@
        <van-collapse style="margin-bottom:25px" v-model="activeNames">
             <van-collapse-item title="商品详细" name="1">
               <div v-html="goodsItem.goodsDesc"></div>
-              <!-- {{goodsItem.goodsDesc}} -->
             </van-collapse-item>
          
        </van-collapse>
@@ -59,42 +58,32 @@
                        <div class="van-sku__goods-name van-ellipsis">{{goodsItem.goodsName}}</div>
                        <div class="van-sku__goods-price">
                            <span class="van-sku__price-symbol">￥</span>
-                           <span class="van-sku__price-num">{{swichPrice(goodsItem.goodsPrice)}}</span>
+                           <span class="van-sku__price-num">{{goodsItem.goodsPrice}}</span>
                            </div>
                            <i @click="handleClose" class="van-icon van-icon-close van-sku__close-icon"></i></div>
                         </div>
         </template>
-        <!-- 折扣劵 -->
+        <!-- 规格选择 -->
         <template slot='sku-body-top'>
-          <div>
-            <van-cell title="折扣劵" v-if="discountMsg.length>0" >
-            <template slot="label">
-               <van-tag type="danger">{{discountMsg}}</van-tag>
-            </template>
-          </van-cell>
-          </div>
-        
-        </template>
-         <!-- 规格选择 -->
-        <template slot="sku-group">
-           <span></span>
+          <span></span>
          <van-collapse value="1" accordion>
             <van-collapse-item title="规格" name="1">
                 <van-radio-group v-model="skuForm.specId">
                 <van-cell-group>
 
-                  <van-cell v-for="(item, index) in goodsSpec" :title=" item.specList.toString() +' ,' +item.price" :key="index"  @click="handleSelectSpec(item)">
-                    <van-radio :name="item.id" @click="handleSelectSpec(item)" />
+                  <van-cell v-for="(item, index) in goodsSpec" :title=" item.specList.toString() +' ,' +item.price" :key="index" clickable @click="skuForm.specId=item.id">
+                    <van-radio :name="item.id" />
                   </van-cell>
                
                 </van-cell-group>
               </van-radio-group>
             </van-collapse-item>
          </van-collapse>
+
         </template>
         <!-- 商品数量选择区 -->
         <template slot="sku-stepper">
-          <div></div>
+          <div> </div>
           <!-- <div class="van-sku-stepper-stock">
             <div class="van-sku-stepper-container">
              <div class="van-sku__stepper-title">购买数量：</div>
@@ -127,7 +116,7 @@
                     placeholder="请输入纸宽"
                     @click-right-icon="$toast('请输入纸宽')"
                   />
-                  <van-field
+                  <!-- <van-field
                     v-model="skuForm.paperNum"
                     required
                      maxlength="20"
@@ -136,7 +125,7 @@
                     right-icon="question-o"
                     placeholder="请输入数量"
                     @click-right-icon="$toast('请输入数量')"
-                  />
+                  /> -->
                    <van-field
                     v-model="skuForm.boxHeight"
                     clearable
@@ -230,18 +219,14 @@ import {mapGetters} from 'vuex'
 import BackArrow from '_c/back-arrow'
 import * as type from '@/Enums'
 import { IsNumber,IsFloatNumber} from '@/libs/tools'
-import common_mix from "@/views/mixins/common";
 export default {
     name:'goods-detail',
-    mixins:[common_mix],
     data(){
         this.skuData = skuData;
         return {
             skuForm:{
-              specId:'', goodsId:this.$route.query.id, goodsSpec:'',paperLength:'',paperWidth:'',paperNum:'',boxHeight:'',paperYx:'',yxType:'',deliveryRemark:'',productionRemark:''
+              specId:'', goodsId:'', goodsSpec:'',paperLength:'',paperWidth:'',paperNum:'',boxHeight:'',paperYx:'',yxType:'',deliveryRemark:'',productionRemark:''
             },
-            totalPrice:0,
-            discountMsg:'',
             sourceType:this.$route.query.type,
             customSkuValidator: () => '请选择规格',
             showBase: false,
@@ -259,25 +244,8 @@ export default {
         ],
         }
     },
-    watch:{
-        setTotalPrice:{
-        handler:function(val,oldval){
-          //debugger
-          if(this.goodsId!="" && this.skuForm.specId!=""  && this.skuForm.paperLength!="" && this.skuForm.paperWidth !="" && this.skuForm.paperNum !=""){
-             this.getTotalPrice()
-          }
-           
-        },
-        deep:true//对象内部的属性监听，也叫深度监听
-      },
-    },
     components:{BackArrow},
     computed:{
-        //为了监控需要数据的变化
-        setTotalPrice(){
-          return this.goodsId+this.skuForm.specId+this.skuForm.paperLength+this.skuForm.paperWidth+this.skuForm.paperNum
-        },
-        //截取规格信息
         goodsSpec(){
           if(this.goodsItem.goodsSpec!=null)
           {
@@ -285,8 +253,8 @@ export default {
               return itemGoodsSpec
           }
           
-        },
-       
+        }
+       //...mapGetters(['getGoodsListByPages']) //可以使用this.getGoodsListByPages 获取数据
     },
     filters:{
          formatRMBData(data){
@@ -299,41 +267,27 @@ export default {
              return `¥：${data.rushPrice} 元`;
            }
             
-         },
-         
+         }
                     
     },
     methods:{
-        //获取选中的规格信息
-        handleSelectSpec(sepcItem){
-          //console.warn(sepcItem)
-          this.skuForm.specId=sepcItem.id
-          this.skuForm.goodsSpec=sepcItem.specList.toString()
-        },
         handleClose(){
               this.showBase=false
         },
         goHome(){
              this.$router.push({ name: "home" });
         },
-        //确认下单
         onBuyClicked(){
-          //console.warn(this.$refs.goodsSkuData.getSkuData()) 
-          if(this.checkInputData())
-          {
-            debugger
-            if(this.totalPrice!=0){
-              this.submitOrder()
-            }
-            
-          }
-
+           // alert(1111);
+          console.warn(this.$refs.goodsSkuData.getSkuData()) 
         },
         onClickCart(){},
+        addShops(){},
         purchase(){
             
             this.showBase=true
         },
+        onChange(){},
         //从产品列表中过滤 选择产品
         getGoodsItem(){
           let _self=this;
@@ -369,110 +323,11 @@ export default {
                 return item.id1 ==_self.goodsId;
             })
            this.goodsItem =currentGoodsItem[0];
-        },
-        checkInputData(){
-          let flag =true;
-          if(this.skuForm.yxType==null || this.skuForm.yxType=="" )
-          {
-            flag =false;
-            this.$toast('请输入压线类型')
-          }
-
-          // if(this.skuForm.paperNum !="" )
-          // {
-          //   if(!IsNumber(this.skuForm.paperNum))
-          //   {
-          //      flag =false;
-          //      this.$toast('数量应该为整数')
-          //   }
-            
-          // }
-
-          if(this.skuForm.paperNum==null || this.skuForm.paperNum=="" )
-          {
-            flag =false;
-            this.$toast('请输入数量')
-          }
-
-          if(this.skuForm.paperWidth==null || this.skuForm.paperWidth=="" )
-          {
-            flag =false;
-            this.$toast('请输入纸宽')
-          }
-
-          if(this.skuForm.paperLength==null || this.skuForm.paperLength=="" )
-          {
-            flag =false;
-            this.$toast('请输入纸长')
-          }
-
-
-          if(this.skuForm.specId==null || this.skuForm.specId=="" )
-          {
-            flag =false;
-            this.$toast('请选择规格')
-          }
-
-
-
-          
-          
-         
-          return flag;
-        },
-        getTotalPrice(){
-          this.totalPrice =0
-          this.discountMsg=''
-           setTimeout(() => {
-             //商品Id,商品规格Id，纸长，纸宽，数量
-             let params={
-                goodsId:this.goodsId,
-                specId:this.skuForm.specId,
-                paperLength:this.skuForm.paperLength,
-                paperWidth:this.skuForm.paperWidth,
-                paperNum:this.skuForm.paperNum
-             }
-           this.$store.dispatch('getGoodsOrderPriceRealTime',params).then(res=>{
-              //this.showErrorNotify(err);
-             // console.warn(res)
-             this.totalPrice =res.price
-             this.discountMsg =res.discount 
-           }).catch(err=>{
-             this.showErrorNotify(err);
-           
-           })
-        }, 500);
-     },
-     //提交表单数据
-     submitOrder(){
-         let _self = this;
-         this.showLoadingToast()
-         let params= this.skuForm
-         this.$store.dispatch('getSubmitgoodsOrder',params).then(res=>{
-             _self.showSuccessNotify("成功下单！");
-             _self.showToastLoading.clear()
-         }).catch(err=>{
-             _self.showToastLoading.clear()
-              _self.showErrorNotify(err);
-         })
-     },
-     swichPrice(data){
-       
-           if(this.totalPrice !=0 && this.goodsId!="" && this.skuForm.specId!=""  && this.skuForm.paperLength!="" && this.skuForm.paperWidth !="" && this.skuForm.paperNum !="")
-           {
-             return this.totalPrice
-           }
-           else
-           {
-              this.totalPrice =0
-              return data
-           }
-         }
+        }
         
     },
     updated(){
-       // this.getTotalPrice()
-       
+      //console.warn(this.skuForm.specId);
     },
     created(){},//组件实列创建完成，属性已经绑定，但DOM还未生成，$el属性还不存在
     mounted(){

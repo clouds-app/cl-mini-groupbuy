@@ -1,0 +1,49 @@
+import axios from '@/libs/api.request'
+import Qs from 'qs'
+
+/**
+* @description 实时获取订单的真实价格
+* @paramsDesc  商品Id,商品规格Id，纸长，纸宽，数量
+* @params { goodsId,specId,paperLength,paperWidth,paperNum }
+* @url /clerp-shop-admin/api/order/price/{goodsId}
+*/
+export const goodsOrderPriceRealTime = ({ goodsId,specId,paperLength,paperWidth,paperNum }) => {
+    //debugger
+    //参数
+    const data = {
+      specId,paperLength,paperWidth,paperNum,
+    }
+    return axios.request({
+      url:   `api/order/price/${goodsId}`,
+      data,
+      method: 'post',
+      transformRequest: [function (data) {
+        // 对 data 进行任意转换处理
+        return Qs.stringify(data)
+      }],
+    })
+  }
+
+
+  /**
+* @description 提交订单
+* @paramDesc 规格ID，商品ID，商品规格字符串;使用,分割，纸长，纸宽，数量，箱高，压线，沿线类型，送货备注，生产备注
+* @params { specId, goodsId, goodsSpec,paperLength,paperWidth,paperNum,boxHeight,paperYx,yxType,deliveryRemark,productionRemark}
+* @url /clerp-shop-admin/api/order/buy
+*/
+export const submitGoodsOrder = ({ specId, goodsId, goodsSpec,paperLength,paperWidth,paperNum,boxHeight,paperYx,yxType,deliveryRemark,productionRemark }) => {
+    //debugger
+    //参数
+    const data = {
+        specId, goodsId, goodsSpec,paperLength,paperWidth,paperNum,boxHeight,paperYx,yxType,deliveryRemark,productionRemark
+    }
+    return axios.request({
+      url:   'api/order/buy',
+      data,
+      method: 'post',
+      transformRequest: [function (data) {
+        // 对 data 进行任意转换处理
+        return Qs.stringify(data)
+      }],
+    })
+  }

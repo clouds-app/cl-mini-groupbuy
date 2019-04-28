@@ -306,7 +306,7 @@ export default {
     methods:{
         //获取选中的规格信息
         handleSelectSpec(sepcItem){
-          //console.warn(sepcItem)
+          console.warn(sepcItem)
           this.skuForm.specId=sepcItem.id
           this.skuForm.goodsSpec=sepcItem.specList.toString()
         },

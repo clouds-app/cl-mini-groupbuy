@@ -181,7 +181,7 @@ export default {
     //this.pageConfig.pageSize =pageSetting.size;
     this.pageConfig.totalItems = pageSetting.total;
 
-    //console.warn(this.pageConfig);
+    console.warn(this.pageConfig);
   },
   mounted() {
     this.$nextTick(() => {});

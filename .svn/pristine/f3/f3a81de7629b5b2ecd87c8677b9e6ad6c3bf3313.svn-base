@@ -6,7 +6,6 @@ import app from './module/app'
 import address from './module/address'
 import goods from './module/goods'
 import rush from './module/rush'
-import order from './module/order'
 
 Vue.use(Vuex)
 
@@ -25,7 +24,6 @@ export default new Vuex.Store({
     address,
     goods,
     rush,
-    order,
     app
   }
 })

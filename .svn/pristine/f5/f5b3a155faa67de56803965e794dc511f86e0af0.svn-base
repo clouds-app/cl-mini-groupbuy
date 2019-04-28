@@ -125,7 +125,6 @@ export default {
       });
     }
   },
-  //组件实列创建完成，属性已经绑定，但DOM还未生成，$el属性还不存在
   created() {
     this.getGoodsList();
   },
@@ -135,7 +134,7 @@ export default {
     this.pageConfig.pageNumber = pageSetting.current;
     //this.pageConfig.pageSize =pageSetting.size;
     this.pageConfig.totalItems = pageSetting.total;
-    //console.warn(this.pageConfig);
+    console.warn(this.pageConfig);
   },
   mounted() {
     this.$nextTick(() => {});
