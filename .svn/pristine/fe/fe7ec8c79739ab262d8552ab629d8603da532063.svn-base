@@ -1,0 +1,68 @@
+<template>
+	<div>
+		<back-arrow title="地址列表" />
+		<van-address-list v-model="chosenAddressId" :list="addressList" @add="addAddress" @edit="editAddress" />
+	</div>
+</template>
+
+<script>
+	import BackArrow from '_c/back-arrow'
+	export default {
+		name: '',
+		data() {
+			return {
+				chosenAddressId: '',
+				addressItems:[],
+				list: [],
+				disabledList: []
+			}
+		},components:{
+			BackArrow
+		},
+		created: function() {
+			this.loadAddressList();
+		},computed:{
+			addressList:function(){
+				var list = [];
+				this.addressItems.forEach((item)=>{
+					list.push({
+						id:item.id2,
+						name:item.name,
+						tel:item.phoneNo,
+						address:item.province+item.city+item.county+item.address
+					});
+					if(item.defaultAds){
+						this.chosenAddressId = item.id2;
+					}
+				});
+				return list;
+			}
+		},
+		methods: {
+			loadAddressList() {
+				let params = {
+					userId: this.$store.state.user.userId
+				}
+				this.$store.dispatch('getAddressList', params).then((res) => {
+					if(res.success){
+						this.addressItems = res.data;
+					}
+				});
+			},
+			addAddress() {
+				 this.$router.push({
+					path:'/addressEdit'
+				 });
+			},
+			editAddress(item, index) {
+				this.$router.push({
+					path:'/addressEdit',
+					query:{
+						id:item.id,
+						edit:true
+					}
+				});
+			}
+		}
+	}
+</script>

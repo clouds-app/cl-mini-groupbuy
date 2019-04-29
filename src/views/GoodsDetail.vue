@@ -7,7 +7,7 @@
                 v-for="(image, index) in images"
                 :key="index"
             >
-            <img width="400" height="200" v-lazy="image">
+            <img width="Auto" height="200" v-lazy="image">
           </van-swipe-item>
          </van-swipe>
          <div>
@@ -25,7 +25,7 @@
 
        <van-collapse style="margin-bottom:25px" v-model="activeNames">
             <van-collapse-item title="商品详细" name="1">
-              <div v-html="goodsItem.goodsDesc"></div>
+              <div class="goodsDesc" v-html="goodsItem.goodsDesc"></div>
               <!-- {{goodsItem.goodsDesc}} -->
             </van-collapse-item>
          
@@ -54,7 +54,7 @@
         <template slot="sku-header">
              <div class="van-sku-header van-hairline--bottom">
                <div class="van-sku-header__img-wrap">
-                   <img src=""></div>
+                   <img :src="productFirstImg"></div>
                    <div class="van-sku-header__goods-info">
                        <div class="van-sku__goods-name van-ellipsis">{{goodsItem.goodsName}}</div>
                        <div class="van-sku__goods-price">
@@ -207,14 +207,14 @@
           @click="goHome"
         />
         <van-goods-action-mini-btn
-          icon="chat"
+          icon="wap-nav"
           text="分 类"
-          @click="onClickCart"
+          @click="onClickCategory"
         />
          <van-goods-action-mini-btn
           icon="contact"
           text="我的"
-          @click="onClickCart"
+          @click="onClickUser"
         />
         <van-goods-action-big-btn
           primary
@@ -251,12 +251,13 @@ export default {
             goodsList:{},
             goodsItem:{},
             current: 0,
+            productFirstImg:'',
             images: [
-            'https://img.yzcdn.cn/public_files/2017/09/05/3bd347e44233a868c99cf0fe560232be.jpg',
-            'https://img.yzcdn.cn/public_files/2017/09/05/c0dab461920687911536621b345a0bc9.jpg',
-            'https://img.yzcdn.cn/public_files/2017/09/05/4e3ea0898b1c2c416eec8c11c5360833.jpg',
-            'https://img.yzcdn.cn/public_files/2017/09/05/fd08f07665ed67d50e11b32a21ce0682.jpg'
-        ],
+            // 'https://img.yzcdn.cn/public_files/2017/09/05/3bd347e44233a868c99cf0fe560232be.jpg',
+            // 'https://img.yzcdn.cn/public_files/2017/09/05/c0dab461920687911536621b345a0bc9.jpg',
+            // 'https://img.yzcdn.cn/public_files/2017/09/05/4e3ea0898b1c2c416eec8c11c5360833.jpg',
+            // 'https://img.yzcdn.cn/public_files/2017/09/05/fd08f07665ed67d50e11b32a21ce0682.jpg'
+            ],
         }
     },
     watch:{
@@ -306,9 +307,15 @@ export default {
     methods:{
         //获取选中的规格信息
         handleSelectSpec(sepcItem){
-          //console.warn(sepcItem)
+          this.discountMsg =''
           this.skuForm.specId=sepcItem.id
           this.skuForm.goodsSpec=sepcItem.specList.toString()
+          //console.warn(sepcItem.price)
+          if(this.totalPrice==0)
+          {
+             this.goodsItem.goodsPrice =sepcItem.price
+          }
+          
         },
         handleClose(){
               this.showBase=false
@@ -321,7 +328,7 @@ export default {
           //console.warn(this.$refs.goodsSkuData.getSkuData()) 
           if(this.checkInputData())
           {
-            debugger
+            //debugger
             if(this.totalPrice!=0){
               this.submitOrder()
             }
@@ -329,19 +336,60 @@ export default {
           }
 
         },
-        onClickCart(){},
+        onClickCategory(){
+             this.HandleRedirect('category')
+        },
+        onClickUser(){
+            this.HandleRedirect('usercenter')
+        },
         purchase(){
-            
-            this.showBase=true
+            if(this.checkLogin())
+            {
+              this.showBase=true
+              this.getFristImg()
+            }
+            else
+            {
+                 this.HandleRedirect('login')
+            }
+          
         },
         //从产品列表中过滤 选择产品
         getGoodsItem(){
           let _self=this;
-          this.goodsList =Object.assign({},this.$store.getters.getGoodsListByPages)
-          let currentGoodsItem =Array.from(this.goodsList.records).filter((item)=>{
-              return item.id1 ==_self.goodsId;
+          let params={
+            goodsId:this.goodsId
+          }
+
+          this.showLoadingToast()
+          this.$store.dispatch('getGoodsDetailById',params).then(res=>{
+           // console.warn(res)
+            this.goodsItem =res.goods;
+            if(this.goodsItem.goodsPrice=="")
+            {
+             
+              let goodsSpec =JSON.parse(this.goodsItem.goodsSpec)
+   
+              this.goodsItem.goodsPrice =goodsSpec[0].price
+
+              this.images =this.goodsItem.goodsImgList.map(item=>{
+                 return this.getBaseImgUrl(item)
+              })
+              
+            }
+             _self.showToastLoading.clear();
+          }).catch(err=>{
+             _self.showToastLoading.clear();
           })
-          this.goodsItem =currentGoodsItem[0];
+         
+        },
+        getFristImg(){
+          if(this.goodsItem !=null)
+          {
+                 
+                 let urlArray=Array.from(this.goodsItem.goodsImgList)
+                 this.productFirstImg =this.getBaseImgUrl(urlArray[0]);
+          }
         },
         //获取正在抢购商品明细
         getRushNowGoodsList(from) {
@@ -451,6 +499,8 @@ export default {
          this.$store.dispatch('getSubmitgoodsOrder',params).then(res=>{
              _self.showSuccessNotify("成功下单！");
              _self.showToastLoading.clear()
+
+             this.HandleRedirect('payment')//调整到支付页面
          }).catch(err=>{
              _self.showToastLoading.clear()
               _self.showErrorNotify(err);
@@ -486,9 +536,9 @@ export default {
               else if(this.sourceType===type.dataFrom_rushAfter){
                  this.getRushNowGoodsList(1)
               }
-              else if(this.sourceType===type.dataFrom_category){
-                 this.getCategoryGoodsItem()
-              }
+              // else if(this.sourceType===type.dataFrom_category){
+              //    this.getCategoryGoodsItem()
+              // }
               else
               {
                 this.getGoodsItem()
@@ -503,7 +553,11 @@ export default {
 </script>
 
 <style lang="less" scope>
-
+.goodsDesc img{                 
+   width: auto;                 
+   height:auto;                 
+   max-height: 100%;                 
+   max-width: 100%;} 
 // .van-cell__title {
 //       color: #505050;
 //       font-size: 14px;

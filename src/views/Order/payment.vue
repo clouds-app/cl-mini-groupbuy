@@ -1,0 +1,116 @@
+<template>
+    <div class="payment">
+
+		<!-- <div class="time_down payment_group">
+			剩余付款时间: <span class="red">59分59秒</span>
+		</div> -->
+
+		<van-cell-group >
+			<van-cell title="订单编号" :value="orderItem.orderNo" />
+			<van-cell title="实付金额"><span class="red">{{orderItem.orderPrice}}</span></van-cell>
+		</van-cell-group>
+
+		<div class="pay_way_group">
+			<div class="pay_way_title">选择支付方式</div>
+			<van-radio-group v-model="payWay">
+				<van-cell-group>
+                  
+					<van-cell @click="payWay='2'">
+						<van-radio name="2" @click="payWay='2'">
+							<img src="../../assets/images/ali_pay.png" alt="支付宝" width="82" height="29">
+						</van-radio>
+					</van-cell>
+                      <van-cell @click="payWay='1'">
+						<van-radio name="1" @click="payWay='1'">
+							<img src="../../assets/images/wx_pay.png" alt="微信支付" width="113" height="23">
+						</van-radio>
+					</van-cell>
+				</van-cell-group>
+			</van-radio-group>
+		</div>
+
+		<van-button class="pay_submit" @click="paySubmit" :loading="isSubmit" type="primary"  bottomAction>去支付</van-button>
+	</div>
+</template>
+<script>
+
+import * as type from '@/Enums/'
+import common_mixins from '@/views/mixins/common'
+export default {
+  name: 'payment',
+  mixins:[common_mixins],
+  data() {
+    return {
+      isSubmit: false,
+      payWay: '2',
+      orderItem:{}
+    };
+  },
+fliters:{
+    yuan(val){
+        return val +" 元"
+    }
+},
+created(){
+   //console.warn(this.$store.getters.setSubmitgoodsOrder);
+   this.orderItem =this.$store.getters.setSubmitgoodsOrder
+},
+  methods: {
+    paySubmit() {
+        this.showLoadingToast();
+        let _self=this;
+        let params ={
+            payType: this.payWay,
+            orderNo: this.orderItem.orderNo
+        }
+        this.$store.dispatch('getOrderPayByType',params).then(res=>{
+            // _self.showSuccessNotify('支付成功！');
+             _self.closeLoaddingToast();
+             console.warn("getOrderPayByType:"+res)
+        }).catch(err=>{
+             _self.closeLoaddingToast();
+             if(typeof(err)!=String)
+             {
+                _self.showErrorNotify('支付失败！');
+             }
+             else
+             {
+                _self.showErrorNotify(err); 
+             }
+             
+        })
+    }
+  },
+
+};
+</script>
+
+<style scoped>
+.van-cell {
+    text-align: left;
+}
+.payment_group {
+  margin-bottom: 10px;
+}
+
+.time_down {
+  background-color: #fffeec;
+  padding: 10px 15px;
+}
+
+.pay_submit {
+  /* position: fixed;
+  bottom: 0; */
+  margin-top: 20px;
+  width: 100%;
+}
+
+.pay_way_group img {
+  vertical-align: middle;
+}
+
+.pay_way_title {
+  padding: 15px;
+  background-color: #fff;
+}
+</style>

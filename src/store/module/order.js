@@ -1,17 +1,17 @@
-import {goodsOrderPriceRealTime,submitGoodsOrder} from '@/api/order'
-import { rejects } from 'assert';
+import {goodsOrderPriceRealTime,submitGoodsOrder,orderPayByType} from '@/api/order'
+//import { rejects } from 'assert';
 const serverBusyTips="服务繁忙，请稍后再试！"
 
 
 export default {
     //属性（使用方法：`this.$stote.state.order.属性`）
     state: {
-
+        submitOrder_state:{}
 
     },
     //计算属性（使用方法：`this.$store.getters.属性`）
     getters: {
-
+        setSubmitgoodsOrder:state=>state.submitOrder_state
     },
     //同步步方法（使用方法：`this.$store.commit('方法名'，{参数})`）
     mutations: {
@@ -19,7 +19,7 @@ export default {
 
         },
         commitSubmitGoodsOrder(state,data){
-
+                state.submitOrder_state =data
         }
     },
     //异步方法（使用方法：`this.$store.dispatch('方法名'，{参数})`） 
@@ -76,6 +76,32 @@ export default {
                 })
             })
          
+        },
+        /**
+        * @description 订单支付
+        * @paramDesc 支付类型，支付单号
+        * @params { payType,orderNo}
+        * @url clerp-shop-admin/api/orderPay/pay
+        */
+        getOrderPayByType({state,commit,getters,dispatch},params){
+                return new Promise((resolve,reject)=>{
+                    orderPayByType(params).then(res=>{
+                        let data =res.data
+                        if(data.success && parseInt(data.status)!=-1)
+                        {
+                            //let formatData=data.data
+                            //commit()
+                            resolve()
+                        }
+                        else{
+                            reject(data.msg)
+                        }
+                    })
+
+                }).catch(err=>{
+                    console.error(err)
+                    reject(serverBusyTips)
+                })
         }
 
     }

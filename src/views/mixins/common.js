@@ -1,5 +1,5 @@
 //视图公用方法
-
+import {getCookie} from '@/libs/util'
 export default {
     data(){
       return {
@@ -12,6 +12,19 @@ export default {
     computed: {
     },
     methods: {
+      checkLogin(){
+        if(getCookie('userName')=="")
+        {
+          return false;
+        }
+        else
+        {
+          return true;
+        }
+      },
+        getBaseImgUrl(imgUrl){  //"http://192.168.0.156:8081/clerp-shop-admin
+           return "http://192.168.168.111:8081/clerp-shop-admin/"+imgUrl
+        },
        //数据加载提示
         showLoadingToast(msg) {
           this.showToastLoading = this.$toast.loading({
@@ -35,6 +48,9 @@ export default {
               background: "#07c160"
             });
           },
+					closeLoaddingToast() {
+						this.$toast.clear();
+					},
           //跳转路由地址
           HandleRedirect(pathName){
             this.$router.push({

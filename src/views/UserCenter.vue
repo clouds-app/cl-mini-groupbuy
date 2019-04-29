@@ -25,25 +25,59 @@
     </van-cell-group>
 
     <van-cell-group>
-      <van-cell icon="points" title="我的积分" is-link />
-      <van-cell icon="gold-coin-o" title="我的优惠券" is-link />
-      <van-cell icon="gift-o" title="我收到的礼物" is-link />
+      <!-- <van-cell icon="points" title="我的积分" is-link />
+      <van-cell icon="gold-coin-o" title="我的优惠券" is-link /> -->
+      <van-cell icon="location-o" title="我的地址" is-link @click="HandleRedirect('addresslist')" />
+    </van-cell-group>
+
+    <van-cell-group class="user-group">
+      <van-cell icon="warn-o" title="退出" is-link @click="logOut" />
     </van-cell-group>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-//import HelloWorld from '@/components/HelloWorld.vue'
-import axios from 'axios'
+import common_mix from './mixins/common.js'
+import {getCookie} from '@/libs/util'
 export default {
   name: 'user-center',
+  data(){
+    return {
+      isLogOut:true
+    }
+  },
+  mixins:[common_mix],
   components: {
   },
+  created(){
+    this.checkLogin()
+  },
   methods:{
-      handProxy(){
-        
+
+     checkLogin(){
+        if(getCookie('userName')=="")
+        {
+          this.$router.push({
+            name: 'login'
+          });
+          
+        }
+      },
+      logOut(){
+       this.$dialog.confirm({
+        title: '提示',
+        message: '确认退出登录吗？'
+       }).then(()=>{
+          this.$store.dispatch('handleLogOut').then(()=>{
+                this.$router.push({
+                    name: 'home'
+                  });
+          })
+       }).catch(()=>{
+
+       })
       }
+      
   }
 }
 </script>

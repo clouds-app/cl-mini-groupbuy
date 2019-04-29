@@ -62,7 +62,7 @@ export const goodsDetailById = ({ goodsId }) => {
       // goodsId
     }
     return axios.request({
-      url:   `api/goods/list/${goodsType}/${pageNumber}/${pageSize}`,
+      url:   `api/goods/detail/${goodsId}`,
       data,
       method: 'post',
       transformRequest: [function (data) {

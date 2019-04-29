@@ -30,7 +30,7 @@ export const forEach = (arr, fn) => {
 
 //生成guid 唯一编码
 export const GetGuid = () =>{
-  debugger
+  //debugger
   let s = [];
   let hexDigits = "0123456789abcdef";
   for (let i = 0; i < 36; i++) {

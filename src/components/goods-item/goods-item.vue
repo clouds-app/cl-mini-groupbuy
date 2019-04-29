@@ -1,20 +1,20 @@
 <template>
     <div>
          <!-- origin-price="10.00"  num="2" -->
-        <van-card v-for="goods in dataSource" :key="goods.id1"
-        :price="goods.goodsPrice"
+        <van-card v-for="goods in dataSource"  :key="goods.id1"
+        :price="getGoodsPrice(goods)"
         :tag="ProductTag"
         :desc="goods.goodsDesc"
         :title="goods.goodsName"
-        :thumb="imageURL"
+        :thumb="getBaseImgUrl(goods.goodsImg)"
         @click="handleGoodsDetail(goods)"
       >
-        <!-- <div slot="tags" class="card__tags">
-          <van-tag plain type="danger">标签1</van-tag>
-          <van-tag  plain  type="danger" > 标签2 </van-tag>
-        </div> -->
+        <div slot="tags" v-if="isFlash || isFlashAfter" class="card__tags">
+          <van-tag v-if="isFlashAfter" plain type="danger">开始时间:</van-tag>
+          <van-tag v-if="isFlash" plain  type="danger" > 结束时间 </van-tag>
+        </div>
         <!-- <div  slot="footer"  class="card__footer">
-          <van-button  round  size="mini" >  购买一  </van-button>
+          <van-button  round  type="primary" size="mini" >  购买 </van-button>
           <van-button round  size="mini"  > 购买二  </van-button>
         </div> -->
       </van-card>
@@ -29,6 +29,7 @@
 </template>
 
 <script>
+
 import * as type from '@/Enums'
 export default {
     name:'goods-item',
@@ -41,36 +42,63 @@ export default {
     },
     data(){
         return {
-           ProductTag:'抢购',
+            isFlash:false,
+            isFlashAfter:false,
+            ProductTag:'',
             pageConfig:{
                  pageNumber:1, 
                  pageSize:10,
                  totalItems:0,
            },
-           imageURL:'//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg'
-        //    goods:{
-        //     price:'10',
-        //     tag:'50%',
-        //     desc:'2018秋冬新款男士休闲时尚军绿飞行夹克秋冬新款男',
-        //     title:'流畅性衬衫',
-        //     imageURL:'//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg'
+           imageURL:'@/assets/nullProduct.png'
          }
     },
+    filters:{
+
+    },
     methods:{
+       getBaseImgUrl(imgUrl){  
+          let url =JSON.parse(imgUrl)
+          let urlArray=Array.from(url)
+         //console.warn(urlArray[0])
+           return "http://192.168.168.111:8081/clerp-shop-admin/"+urlArray[0]
+        },
+      getGoodsPrice(goodsItem){
+        if(goodsItem!=null)
+        {
+             if(this.dataFrom!=type.dataFrom_rusnNow && this.dataFrom!=type.dataFrom_rushAfter)
+             {
+                 let goodsSpec =JSON.parse(goodsItem.goodsSpec)
+                 return  goodsSpec[0].price
+             }
+             else
+             {
+               return goodsItem.rushPrice
+             }
+            
+
+        }
+         //console.warn("goodsItem"+JSON.stringify(goodsItem));
+     
+      },
       handleGoodsDetail(goods){
-        //debugger
+        
         let goodsId =goods.id1;
          if(goodsId==null || goodsId=="")
           {
             goodsId =goods.goodsId
           }
-       this.$router.push({
-        path:'/goodsdetail',
-        query:{
-          id:goodsId,
-          type:this.dataFrom
-        }
-      })
+          if(this.dataFrom!=type.dataFrom_rushAfter)
+          {
+             this.$router.push({
+              path:'/goodsdetail',
+              query:{
+                id:goodsId,
+                type:this.dataFrom
+              }
+            })
+          }
+           
       }
     },
     updated(){
@@ -78,7 +106,8 @@ export default {
     },
     mounted(){
        this.$nextTick(()=>{
-             // console.log("商品列表数据mounted-good-item："+JSON.stringify(this.dataSource));
+            this.isFlash=(this.dataFrom==type.dataFrom_rusnNow)
+            this.isFlashAfter=(this.dataFrom==type.dataFrom_rushAfter)
         })
     }
 } 
@@ -106,6 +135,7 @@ export default {
   .card__tags {
     .van-tag {
       margin-right: 5px;
+      //background: #ccc
     }
   }
 </style>

@@ -6,8 +6,9 @@
       <van-tabbar-item icon="contact" to="/usercenter">我的</van-tabbar-item> -->
        <!-- <van-tabbar-item icon="chat" to="/login">登陆</van-tabbar-item>
        <van-tabbar-item icon="chat" to="/register">注册</van-tabbar-item>-->
-       <van-tabbar-item icon="chat" to="/goodslist">商品</van-tabbar-item> 
-       <van-tabbar-item icon="chat" to="/category">分类</van-tabbar-item>
-       <van-tabbar-item icon="chat" to="/flashsale">抢购</van-tabbar-item> 
+       <!-- <van-tabbar-item icon="new-arrival-o" to="/goodslist">商品</van-tabbar-item> -->
+       <van-tabbar-item icon="wap-nav" to="/category">分类</van-tabbar-item>
+       <van-tabbar-item icon="logistics" to="/flashsale">抢购</van-tabbar-item> 
+       <van-tabbar-item icon="contact" to="/usercenter">我的</van-tabbar-item>
     </van-tabbar>
 </template>

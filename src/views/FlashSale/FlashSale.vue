@@ -13,12 +13,7 @@
             :finished-text="finishedText"
             @load="onLoad(0)"
           >
-            <!-- <van-cell
-              v-for="item in list[0].items"
-              :key="item.goodsId"
-              :title="item.goodsName"
-            /> -->
-            <goods-item :dataSource="list[0].items" :dataFrom="dataFrom"/>
+            <goods-item :dataSource="RushListNow" :dataFrom="dataFrom"/>
           </van-list>
         </van-pull-refresh>
       </van-tab>
@@ -35,11 +30,12 @@
             :error-text="errorText"
             @load="onLoad(1)"
           >
-            <van-cell
+            <!-- <van-cell
               v-for="item in list[1].items"
               :key="item.goodsId"
               :title="item.goodsName"
-            />
+            /> -->
+             <goods-item :dataSource="RushListAfter" :dataFrom="dataFromAfter"/>
           </van-list>
         </van-pull-refresh>
       </van-tab>
@@ -58,6 +54,7 @@ export default {
   },
   data() {
     return {
+       dataFromAfter:type.dataFrom_rushAfter,
        dataFrom:type.dataFrom_rusnNow,
        RushListNow:[],
        RushListAfter:[],
@@ -83,6 +80,7 @@ export default {
   },
    created(){
       this.getRushListNowData()
+       this.getRushListAfterData()
    },
     methods: {
     onLoad(index) {
@@ -127,7 +125,7 @@ export default {
     getRushListNowData(){
         let _self=this;
         this.$store.dispatch('getRushListNow').then(res=>{
-            //console.warn(res)
+           // debugger
             _self.RushListNow =res
         }).catch(err=>{
 

@@ -10,6 +10,9 @@ export default {
       dev: '',//http://192.168.168.111:8081/clerp-shop-admin/
       pro: 'https://produce.com'
     },
+    //http://192.168.168.111:8081/clerp-shop-admin/
+    
+		baseImgUrl:'http://192.168.168.111:8080/clerp-shop-admin',
     /**
      * @description 默认打开的首页的路由name值，默认为home
      */

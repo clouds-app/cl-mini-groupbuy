@@ -24,13 +24,13 @@
     />
 </van-cell-group>
   <div class="form-group">
- <van-button :loading='isLoding' style="margin-right:10px;width:300px;" round type="info" @click="handleSubmit">登 录</van-button>
+ <van-button :loading='isLoding' style="margin-right:10px;width:300px;" round type="primary" @click="handleSubmit">登 录</van-button>
   <!-- <van-button   style="margin-right:10px" type="default" @click="resetInput">重 置</van-button> -->
   </div>
  
    <div class="aui-account-link">
 			<a @click="HandleRedirect('register')" href="javascript:;">注册账号</a>&nbsp;&nbsp;&nbsp;&nbsp;
-			<a href="javascript:;">忘记密码</a>
+			<!-- <a href="javascript:;">忘记密码</a> -->
 		</div>
 </div>
 </template>

@@ -89,6 +89,21 @@ export default [
       isLogin: false
     },
     component: () => import(/* webpackChunkName: "AddressList" */ '@/views/AddressList/AddressList.vue')
+  },{
+    path: '/addressedit',
+    name: 'addressedit',
+    meta:{
+      isLogin: false
+    },
+    component: () => import(/* webpackChunkName: "AddressList" */ '@/views/AddressList/AddressEdit.vue')
+  },
+  {
+    path: '/payment',
+    name: 'payment',
+    meta:{
+      isLogin: false
+    },
+    component: () => import(/* webpackChunkName: "payment" */ '@/views/Order/payment.vue')
   },
   {
     path: '*',

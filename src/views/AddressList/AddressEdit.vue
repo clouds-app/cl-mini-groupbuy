@@ -1,0 +1,186 @@
+<template>
+	<div>
+		<back-arrow title="编辑收货地址" />
+		<van-cell-group>
+			<van-field v-model="addressInfo.name" required label="姓名" required maxlength="20" clearable />
+			<van-field v-model="addressInfo.phoneNo" type="text" label="手机号码" required maxlength="11" clearable />
+			<van-field v-model="addressInfo.sparePhoneNo" type="text" label="备用号码" maxlength="11" clearable />
+			<van-field v-model="areaText" type="text" label="地区" readonly required @click="addressShow=true" clearable />
+			<van-field v-model="addressInfo.address" type="text" label="详细地址" required maxlength="100" clearable />
+			<van-switch-cell v-model="addressInfo.defaultAds" title="设为默认收货地址" />
+		</van-cell-group>
+
+		<div class="btnBox">
+			<van-button type="primary" block @click="saveAddress" :disabled="btnDisabled">{{query.edit?'修改':'保存'}}</van-button>
+			<br />
+			<van-button v-if="query.edit" type="default" block @click="deleteAddress" :disabled="btnDisabled">删除</van-button>
+		</div>
+
+		<van-popup v-model="addressShow" position="bottom">
+			<van-area :area-list="areaList" @confirm="areaSelected" @cancel="addressShow=false" v-model="addressInfo.areaCode" />
+		</van-popup>
+	</div>
+</template>
+
+<script>
+	import areaList from '@/libs/area.js';
+	import common from '@/views/mixins/common.js';
+	import BackArrow from '_c/back-arrow';
+	export default {
+		data() {
+			return {
+				btnDisabled: false,
+				addressShow: false,
+				areaList,
+				searchResult: [],
+				addressInfo: {
+					province: '',
+					city: '',
+					county: '',
+					name: '',
+					phoneNo: '',
+					sparePhoneNo: '',
+					address: '',
+					defaultAds: false
+				},
+				query: {
+					edit: false
+				}
+			}
+		},
+		mixins: [common],
+		components: {
+			BackArrow
+		},
+		computed: {
+			areaText: function() {
+				if (this.addressInfo.province == '') {
+					return '';
+				}
+				return this.addressInfo.province + '/' + this.addressInfo.city + '/' + this.addressInfo.county;
+			}
+		},
+		mounted: function() {
+			var query = this.$route.query;
+			if (query != undefined && query.edit) {
+				this.query = query;
+				this.loadDetail(query.id);
+			}
+		},
+		methods: {
+			loadDetail(addressId) {
+				let params = {
+					userId: this.$store.state.user.userId,
+					addressId: addressId
+				}
+				this.$store.dispatch('getAddressDetail', params).then((res) => {
+					this.addressInfo = res.data;
+				});
+			},
+			areaSelected(area) {
+				this.addressInfo.province = area[0].name;
+				this.addressInfo.city = area[1].name;
+				this.addressInfo.county = area[2].name;
+				this.addressInfo.areaCode = area[2].code;
+				this.addressShow = false;
+			},
+			saveAddress() {
+				let params = {
+					userId: this.$store.state.user.userId,
+					addressId: this.addressInfo.id2,
+					addressInfo: this.addressInfo
+				}
+				this.btnDisabled = true;
+				this.showLoaddingToast('提交中...');
+				if (!this.query.edit) {
+					this.$store.dispatch("setAddressSave", params).then((res) => {
+						this.btnDisabled = false;
+						this.closeLoaddingToast();
+						if (res.success) {
+							this.showSuccessNotify('地址保存成功');
+							this.addressInfo = {
+									province: '',
+									city: '',
+									county: '',
+									name: '',
+									phoneNo: '',
+									sparePhoneNo: '',
+									address: '',
+									defaultAds: false
+							}
+							this.query.edit = false;
+							return;
+						}
+					}).catch((msg) => {
+						this.btnDisabled = false;
+						this.closeLoaddingToast();
+						this.showErrorNotify(msg);
+					});
+				} else {
+					this.$store.dispatch("setAddressUpdate", params).then((res) => {
+						this.btnDisabled = false;
+						this.closeLoaddingToast();
+						if (res.success) {
+							this.showSuccessNotify('地址修改成功');
+							return;
+						}
+					}).catch((msg) => {
+						this.btnDisabled = false;
+						this.closeLoaddingToast();
+						this.showErrorNotify(msg);
+					});
+				}
+			},
+			deleteAddress() {
+				this.$dialog.confirm({
+					title: '提示',
+					message: '确定要删除吗？'
+				}).then(() => {
+					let params = {
+						userId: this.$store.state.user.userId,
+						addressId: this.addressInfo.id2
+					}
+					this.btnDisabled = true;
+					this.showLoaddingToast('提交中...');
+					this.$store.dispatch("setAddressDelete", params).then((res) => {
+						this.btnDisabled = false;
+						this.closeLoaddingToast();
+						if (res.success) {
+							this.showSuccessNotify('地址删除成功');
+							this.query.edit = false;
+							this.addressInfo = {
+									province: '',
+									city: '',
+									county: '',
+									name: '',
+									phoneNo: '',
+									sparePhoneNo: '',
+									address: '',
+									defaultAds: false
+							}
+						}
+					}).catch((msg) => {
+						this.btnDisabled = false;
+						this.closeLoaddingToast();
+						this.showErrorNotify(msg);
+					});
+					
+				}).catch(() => {
+					// on cancel
+				});
+
+			}
+		}
+	}
+</script>
+
+<style>
+	.btnBox {
+		padding: 1rem;
+	}
+
+	.van-field__label,
+	.van-cell__title {
+		text-align: left;
+	}
+</style>

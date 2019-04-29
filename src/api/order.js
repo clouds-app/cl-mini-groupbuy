@@ -47,3 +47,23 @@ export const submitGoodsOrder = ({ specId, goodsId, goodsSpec,paperLength,paperW
       }],
     })
   }
+
+
+/**
+* @description 订单支付
+* @paramDesc 支付类型，支付单号
+* @params { payType,orderNo}
+* @url clerp-shop-admin/api/orderPay/pay
+*/
+  export const orderPayByType =({payType,orderNo})=>{
+    const data ={payType,orderNo}
+    return axios.request({
+      url:   'api/orderPay/pay',
+      data,
+      method: 'post',
+      transformRequest: [function (data) {
+        // 对 data 进行任意转换处理
+        return Qs.stringify(data)
+      }],
+    })
+  }

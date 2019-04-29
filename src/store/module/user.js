@@ -6,13 +6,13 @@ import {
   smsValidator,
   getUserInfo 
 } from '@/api/user'
-import { setToken, getToken } from '@/libs/util'
+import { setToken, getToken,setCookie,getCookie} from '@/libs/util'
 import { GetGuid } from '@/libs/tools'
 const serverBusyTips="服务繁忙，请稍后再试！";
 export default {
   state: {
-    userName: '',
-    userId: '',
+    userName: getCookie('userName'),
+    userId: getCookie('userId'),
     avatorImgPath: '',
     token: getToken(),
     access: '',
@@ -24,9 +24,11 @@ export default {
     },
     setUserId (state, id) {
       state.userId = id
+			setCookie('userId',id);
     },
     setUserName (state, name) {
-      state.userName = name
+      state.userName = name;
+			setCookie('userName',name);
     },
     setAccess (state, access) {
       state.access = access
@@ -79,6 +81,8 @@ export default {
           if(data.success)
           {
             commit('setToken', username+GetGuid())//data.token
+						commit('setUserId',data.data.USERID);
+						commit('setUserName',data.data.USERNAME);
             resolve()
           }
           else
@@ -96,17 +100,19 @@ export default {
     // 退出登录
     handleLogOut ({ state, commit }) {
       return new Promise((resolve, reject) => {
-        logout(state.token).then(() => {
-          commit('setToken', '')
-          commit('setAccess', [])
-          resolve()
-        }).catch(err => {
-          reject(err)
-        })
+        // logout(state.token).then(() => {
+        //   commit('setToken', '')
+        //   commit('setUserId',data.data.USERID);
+        //   commit('setUserName',data.data.USERNAME);
+        //   resolve()
+        // }).catch(err => {
+        //   reject(err)
+        // })
         // 如果你的退出登录无需请求接口，则可以直接使用下面三行代码而无需使用logout调用接口
-        // commit('setToken', '')
-        // commit('setAccess', [])
-        // resolve()
+        commit('setToken', '')
+        commit('setUserId','');
+        commit('setUserName','');
+        resolve()
       })
     },
     // 获取用户相关信息
@@ -132,11 +138,10 @@ export default {
     },
     //获取手机验证码
     getSendSms({ commit,payload }, phoneNo){
-      debugger
       return new Promise((resolve, reject) => {
-        sendSms({
+        sendSms(
           phoneNo
-        }).then(res => {
+        ).then(res => {
           let data = res.data
           if(data.success)
           {

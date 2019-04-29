@@ -11,46 +11,83 @@
             v-for="(image, index) in images"
             :key="index"
           >
-            <img width="400" height="200" v-lazy="image">
+            <img width="400" height="200" :src="imgUrlFilter(image.adverImg)">
           </van-swipe-item>
         </van-swipe>
       </van-row>
       <van-row style="margin:10px,0px">
-          <van-notice-bar
-            text="足协杯战线连续第2年上演广州德比战，上赛季半决赛上恒大以两回合5-3的总比分淘汰富力。 "
-          left-icon="volume-o"
-        />
+				<van-notice-bar v-for="(item,index) in noteList" :key="index" :text="item.noteTitle"
+					left-icon="volume-o" scrollable
+				/>
       </van-row>
 
      <div class="aui-palace">
 		   信息列表
 		</div>
+		<van-row>
+				<van-col span="12" v-for="(item,index) in navImages" :key="index">
+					<img :src="imgUrlFilter(item.adverImg)"/>
+				</van-col>
+		</van-row>
    </div>
 </template>
 
 <script>
 // @ is an alias to /src
-
-import axios from 'axios'
+import axios from 'axios';
+import common from '@/views/mixins/common.js';
 export default {
   name: 'home',
   data() {
     return {
       current: 0,
-      images: [
-        'https://img.yzcdn.cn/public_files/2017/09/05/3bd347e44233a868c99cf0fe560232be.jpg',
-        'https://img.yzcdn.cn/public_files/2017/09/05/c0dab461920687911536621b345a0bc9.jpg',
-        'https://img.yzcdn.cn/public_files/2017/09/05/4e3ea0898b1c2c416eec8c11c5360833.jpg',
-        'https://img.yzcdn.cn/public_files/2017/09/05/fd08f07665ed67d50e11b32a21ce0682.jpg'
-      ]
+      images: [],
+			navImages:[],
+			noteList:[]
     };
   },
+	mixins: [common],
   components: {
+		
   },
+	mounted:function(){
+		this.loadNoteList();
+		this.loadAdList('homeSwipe',(data)=>{
+			this.images = data;
+		});
+		this.loadAdList('homeNav',(data)=>{
+			this.navImages = data;
+		});
+	},
   methods:{
-      handProxy(){
-        
-      }
+			imgUrlFilter(value){
+				return   this.$config.baseImgUrl + value;
+			},
+      loadNoteList(){
+				let params = {
+					pageNumber : 1,
+					pageSize:1
+				}
+				this.$store.dispatch("getNoteList", params).then((res) => {
+					if (res.success) {
+						this.noteList = res.data.records;
+					}
+				}).catch((msg) => {
+					this.showErrorNotify(msg);
+				});
+			},
+			loadAdList(adLocation,callback){
+				let params = {
+					adLocation : adLocation
+				}
+				this.$store.dispatch("getAdList", params).then((res) => {
+					if (res.success) {
+							callback(res.data);
+					}
+				}).catch((msg) => {
+					this.showErrorNotify(msg);
+				});
+			}
   }
 }
 </script>
