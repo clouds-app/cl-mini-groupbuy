@@ -1,0 +1,150 @@
+<template>
+  <div>
+     <back-arrow title="限时抢购"/>
+     <van-tabs>
+      <van-tab :title="flashSaleTitle">
+        <van-pull-refresh
+          v-model="list[0].refreshing"
+          @refresh="onRefresh(0)"
+        >
+          <van-list
+            v-model="list[0].loading"
+            :finished="list[0].finished"
+            :finished-text="finishedText"
+            @load="onLoad(0)"
+          >
+            <goods-item :dataSource="RushListNow" :dataFrom="dataFrom"/>
+          </van-list>
+        </van-pull-refresh>
+      </van-tab>
+
+      <van-tab :title="timeToSaleTitle">
+        <van-pull-refresh
+          v-model="list[1].refreshing"
+          @refresh="onRefresh(1)"
+        >
+          <van-list
+            v-model="list[1].loading"
+            :finished="list[1].finished"
+            :error.sync="list[1].error"
+            :error-text="errorText"
+            @load="onLoad(1)"
+          >
+            <!-- <van-cell
+              v-for="item in list[1].items"
+              :key="item.goodsId"
+              :title="item.goodsName"
+            /> -->
+             <goods-item :dataSource="RushListAfter" :dataFrom="dataFromAfter"/>
+          </van-list>
+        </van-pull-refresh>
+      </van-tab>
+    </van-tabs>
+   </div>
+</template>
+
+<script>
+import GoodsItem from "_c/goods-item";
+import BackArrow from '_c/back-arrow'
+import * as type from '@/Enums'
+export default {
+  name:'flash-sale',
+  components:{
+      BackArrow,GoodsItem
+  },
+  data() {
+    return {
+       dataFromAfter:type.dataFrom_rushAfter,
+       dataFrom:type.dataFrom_rusnNow,
+       RushListNow:[],
+       RushListAfter:[],
+       flashSaleTitle:"正在抢购",
+       timeToSaleTitle:"即将抢购",
+       errorInfo: '错误提示',
+       finishedText: '-------没有更多了-------',
+       errorText: '请求失败，点击重新加载',
+        list: [{
+        items: [],
+        refreshing: false,
+        loading: false,
+        error: false,
+        finished: false
+      }, {
+        items: [],
+        refreshing: false,
+        loading: false,
+        error: false,
+        finished: false
+      }]
+    };
+  },
+   created(){
+      this.getRushListNowData()
+       this.getRushListAfterData()
+   },
+    methods: {
+    onLoad(index) {
+      const list = this.list[index];
+      setTimeout(() => {
+          //正在抢购数据
+          if(index==0)
+          {
+                this.RushListNow.map((goodsItem)=>{
+                    list.items.push(goodsItem)
+                    });
+                list.loading = false;
+                if (list.items.length >= this.RushListNow.length) {
+                list.finished = true;
+                }
+          }
+          //即将抢购数据
+          if(index ==1)
+          {
+                this.RushListAfter.map((goodsItem)=>{
+                    list.items.push(goodsItem)
+                  });
+                list.loading = false;
+                if (list.items.length >= this.RushListAfter.length) {
+                list.finished = true;
+                }
+          }
+
+      }, 500);
+    },
+    onRefresh(index) {
+      const list = this.list[index];
+      setTimeout(() => {
+        list.items = [];
+        list.error = false;
+        list.finished = false;
+        list.refreshing = false;
+        window.scrollTo(0, 10);
+      }, 1000);
+    },
+    //获取正在抢购商品列表
+    getRushListNowData(){
+        let _self=this;
+        this.$store.dispatch('getRushListNow').then(res=>{
+           // debugger
+            _self.RushListNow =res
+        }).catch(err=>{
+
+            console.error(err)
+        });
+    },
+    //获取即将抢购商品列表
+    getRushListAfterData(){
+        let _self=this;
+        this.$store.dispatch('getRushListAfter').then(res=>{
+            _self.RushListAfter =res
+        }).catch(err=>{
+
+            console.error(err)
+        });
+    }
+  },
+ 
+};
+
+</script>
+

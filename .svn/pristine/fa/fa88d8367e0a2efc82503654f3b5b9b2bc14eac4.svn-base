@@ -1,0 +1,151 @@
+<template>
+    <div>
+         <!-- origin-price="10.00"  num="2" -->
+        <van-card v-for="goods in dataSource"  :key="goods.id1"
+        :price="getGoodsPrice(goods)"
+        :tag="ProductTag"
+        :desc="goods.goodsDesc"
+        :title="goods.goodsName"
+        :thumb="getBaseImgUrl(goods.goodsImg)"
+        @click="handleGoodsDetail(goods)"
+      >
+        <div slot="tags" v-if="isFlash || isFlashAfter" class="card__tags">
+          <!-- <van-tag v-if="isFlashAfter" plain type="danger"> </van-tag>
+          <van-tag v-if="isFlash" plain  type="danger" > 结束时间 </van-tag> -->
+         
+        </div>
+        <!-- <div  slot="footer"  class="card__footer">
+          <van-button  round  type="primary" size="mini" >  购买 </van-button>
+          <van-button round  size="mini"  > 购买二  </van-button>
+        </div> -->
+      </van-card>
+       <!-- <van-pagination 
+            v-model="pageConfig.pageNumber" 
+            :total-items="pageConfig.totalItems" 
+            :show-page-size="pageConfig.pageSize" 
+            force-ellipses
+            
+            />  -->
+    </div>
+</template>
+
+<script>
+ import CountDown from '_c/countdown'
+import * as type from '@/Enums'
+export default {
+    name:'goods-item',
+    components:{
+      CountDown
+    },
+    props:{
+      dataSource:{},
+      dataFrom:{
+        type:String,
+        default:type.dataFrom_goodsList
+      }//rusnNow,rushAfter,goodsList,category
+    },
+    data(){
+        return {
+            startTime:'1481450106',
+            endTime:'1481450216',
+            isFlash:false,
+            isFlashAfter:false,
+            ProductTag:'',
+            pageConfig:{
+                 pageNumber:1, 
+                 pageSize:10,
+                 totalItems:0,
+           },
+           imageURL:'@/assets/nullProduct.png'
+         }
+    },
+    filters:{
+
+    },
+    methods:{
+       callback(){
+         alert(111)
+       },
+       getBaseImgUrl(imgUrl){  
+          let url =JSON.parse(imgUrl)
+          let urlArray=Array.from(url)
+         //console.warn(urlArray[0]) 
+           return "http://192.168.168.111:8081/clerp-shop-admin/"+urlArray[0]
+        },
+      getGoodsPrice(goodsItem){
+        if(goodsItem!=null)
+        {
+             if(this.dataFrom!=type.dataFrom_rusnNow && this.dataFrom!=type.dataFrom_rushAfter)
+             {
+                 let goodsSpec =JSON.parse(goodsItem.goodsSpec)
+                 return  goodsSpec[0].price
+             }
+             else
+             {
+               return goodsItem.rushPrice
+             }
+            
+
+        }
+         //console.warn("goodsItem"+JSON.stringify(goodsItem));
+     
+      },
+      handleGoodsDetail(goods){
+        
+        let goodsId =goods.id1;
+         if(goodsId==null || goodsId=="")
+          {
+            goodsId =goods.goodsId
+          }
+          if(this.dataFrom!=type.dataFrom_rushAfter)
+          {
+             this.$router.push({
+              path:'/goodsdetail',
+              query:{
+                id:goodsId,
+                type:this.dataFrom
+              }
+            })
+          }
+           
+      }
+    },
+    updated(){
+       // console.log("商品列表数据updated-good-item："+JSON.stringify(this.dataSource));
+    },
+    mounted(){
+       this.$nextTick(()=>{
+            this.isFlash=(this.dataFrom==type.dataFrom_rusnNow)
+            this.isFlashAfter=(this.dataFrom==type.dataFrom_rushAfter)
+        })
+    }
+} 
+</script>
+
+
+<style lang="less" scope>
+//   .van-card__title {
+//       color: #505050;
+//       font-size: 14px;
+//       text-align: justify;
+//       font-weight: 800;
+//   }
+//   .van-card__price {
+//     color: #ef4f4f;
+//     font-size: 15px;
+//     font-weight: 600;
+// }
+    .van-card {
+        text-align: left;
+    }
+  .card__footer {
+    padding-top: 10px;
+  }
+  .card__tags {
+    .van-tag {
+      margin-right: 5px;
+      //background: #ccc
+    }
+  }
+</style>
+

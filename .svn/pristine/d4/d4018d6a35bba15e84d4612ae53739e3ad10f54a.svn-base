@@ -1,0 +1,80 @@
+<template>
+	<div>
+		<back-arrow title="我的订单" />
+		<van-tabs v-model="active">
+			<van-tab title="待付款">
+				<van-card :key="index" style="text-align: left;" v-for="(item,index) in waitingPayItems" :num="item.paperNum" :tag="item.orderType==2?'抢购':''" 
+				:price="item.payPrice" :desc="getDescInfo(item)" :title="item.goodsName" :thumb="getBaseImgUrl(item.goodsImg)">
+				</van-card>
+				<div v-if="waitingPayItems.length == 0" style="padding: 5rem;">
+					还没有订单哦
+				</div>
+			</van-tab>
+			<van-tab title="已付款">
+				<van-card :key="index" style="text-align: left;" v-for="(item,index) in endPayItems" :num="item.paperNum" :tag="item.orderType==2?'抢购':''" 
+				:price="item.payPrice" :desc="getDescInfo(item)" :title="item.goodsName" :thumb="getBaseImgUrl(item.goodsImg)">
+				</van-card>
+				<div v-if="endPayItems.length == 0" style="padding: 5rem;">
+					还没有订单哦
+				</div>
+			</van-tab>
+		</van-tabs>
+	</div>
+</template>
+
+
+<script>
+	import BackArrow from '_c/back-arrow'
+	import common from '@/views/mixins/common.js';
+	export default {
+		name: '',
+		data() {
+			return {
+				active: '',
+				waitingPayItems: [],
+				endPayItems: []
+			}
+		},
+		components: {
+			BackArrow
+		},
+		mixins: [common],
+		created: function() {
+			this.loadOrderWaitingPay();
+			this.loadOrderEndPay();
+		},
+		computed: {},
+		methods: {
+			getBaseImgUrl(value){
+				var img = JSON.parse(value);
+				return this.$config.baseImgUrl+img[0];
+			},
+			getDescInfo(item){
+				return '纸长:'+item.paperLength+' 纸宽:'+item.paperWidth
+			},
+			loadOrderWaitingPay() {
+				if(this.waitingPayItems.length > 0){
+					return;
+				}
+				this.$store.dispatch("orderWaitingPay").then(res => {
+					this.waitingPayItems = res.data;
+				}).catch(msg => {
+					this.showErrorNotify(msg);
+				});
+			},
+			loadOrderEndPay(){
+				if(this.endPayItems.length > 0){
+					return;
+				}
+				this.$store.dispatch("orderEndPay").then(res => {
+					this.endPayItems = res.data;
+				}).catch(msg => {
+					this.showErrorNotify(msg);
+				});
+			}
+		}
+	}
+</script>
+
+<style>
+</style>

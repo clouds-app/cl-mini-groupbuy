@@ -33,8 +33,7 @@
 </template>
 
 <script>
-// @ is an alias to /src
-import axios from 'axios';
+import CountDown from 'vue2-countdown'
 import common from '@/views/mixins/common.js';
 export default {
   name: 'home',
@@ -48,9 +47,10 @@ export default {
   },
 	mixins: [common],
   components: {
-		
+		CountDown
   },
 	mounted:function(){
+    //console.warn("this.$route.params"+JSON.stringify(this.$route.params))
 		this.loadNoteList();
 		this.loadAdList('homeSwipe',(data)=>{
 			this.images = data;

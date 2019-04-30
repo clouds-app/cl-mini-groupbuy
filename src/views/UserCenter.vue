@@ -1,110 +1,173 @@
 <template>
-  <div>
-    <img class="user-poster" src="https://img.yzcdn.cn/public_files/2017/10/23/8690bb321356070e0b8c4404d087f8fd.png">
-    <van-row class="user-links">
-      <van-col span="6">
-        <van-icon name="pending-payment" />
-        待付款
-      </van-col>
-      <van-col span="6">
-        <van-icon name="records" />
-        待接单
-      </van-col>
-      <van-col span="6">
-        <van-icon name="tosend" />
-        待发货
-      </van-col>
-      <van-col span="6">
-        <van-icon name="logistics" />
-        已发货
-      </van-col>
-    </van-row>
+	<div>
+		<div class="ucenter-top" >
+			<div class="ucenter-user">
+				<div class="ucenter-user-head">
+					<van-icon name="user-o" size="3.5rem" />
+				</div>
+				<div style="padding-top: 1rem;">
+					{{this.$store.state.user.userName}}
+				</div>
+			</div>
+		</div>
+		<van-row class="user-links">
+			<van-col span="6" @click.native="openOrderList(0)">
+				<van-icon name="pending-payment" />
+				待付款
+			</van-col>
+			<van-col span="6" @click.native="openOrderList(1)">
+				<van-icon name="records" />
+				已付款
+			</van-col>
+			<!-- <van-col span="6">
+				<van-icon name="tosend" />
+				待发货
+			</van-col>
+			<van-col span="6">
+				<van-icon name="logistics" />
+				已发货
+			</van-col> -->
+		</van-row>
 
-    <van-cell-group class="user-group">
-      <van-cell icon="records" title="全部订单" is-link />
-    </van-cell-group>
+		<van-cell-group class="user-group">
+			<van-cell icon="records" title="全部订单" is-link />
+		</van-cell-group>
 
-    <van-cell-group>
-      <!-- <van-cell icon="points" title="我的积分" is-link />
+		<van-cell-group>
+			<!-- <van-cell icon="points" title="我的积分" is-link />
       <van-cell icon="gold-coin-o" title="我的优惠券" is-link /> -->
-      <van-cell icon="location-o" title="我的地址" is-link @click="HandleRedirect('addresslist')" />
-    </van-cell-group>
+			<van-cell icon="location-o" title="我的地址" is-link @click="HandleRedirect('addresslist')" />
+		</van-cell-group>
 
-    <van-cell-group class="user-group">
-      <van-cell icon="warn-o" title="退出" is-link @click="logOut" />
-    </van-cell-group>
-  </div>
+		<van-cell-group class="user-group">
+			<van-cell icon="warn-o" title="退出" is-link @click="logOut" />
+		</van-cell-group>
+	</div>
+
 </template>
 
 <script>
-import common_mix from './mixins/common.js'
-import {getCookie} from '@/libs/util'
-export default {
-  name: 'user-center',
-  data(){
-    return {
-      isLogOut:true
-    }
-  },
-  mixins:[common_mix],
-  components: {
-  },
-  created(){
-    this.checkLogin()
-  },
-  methods:{
+	import common_mix from './mixins/common.js'
+	import {
+		getCookie
+	} from '@/libs/util'
+	export default {
+		name: 'user-center',
+		data() {
+			return {
+				isLogOut: true,
+				bgImgPath: []
+			}
+		},
+		mixins: [common_mix],
+		components: {},
+		created() {
+			this.checkLogin()
+		},
+		methods: {
+			getImgUrl: function(value) {
+				return this.$config.baseImgUrl + value;
+			},
+			openChangePassword(){
+				this.$router.push({
+					path:'/changePassword'
+				});
+			},
+			openOrderList(type){
+				this.$router.push({
+					name:'orderList',
+					query:{
+						active:type
+					}
+				});
+			},
+			loadCenterBg() {
+				//获取背景图
+				let params = {
+					adLocation: 'ucenterBg'
+				}
+				this.$store.dispatch("getAdList", params).then((res) => {
+					if (res.success) {
+						this.bgImgPath = res.data;
+					}
+				}).catch((msg) => {
+					this.showErrorNotify(msg);
+				});
+			},
+			checkLogin() {
+				if (getCookie('userName') == "") {
+					this.$router.push({
+						name: 'login'
+					});
 
-     checkLogin(){
-        if(getCookie('userName')=="")
-        {
-          this.$router.push({
-            name: 'login'
-          });
-          
-        }
-      },
-      logOut(){
-       this.$dialog.confirm({
-        title: '提示',
-        message: '确认退出登录吗？'
-       }).then(()=>{
-          this.$store.dispatch('handleLogOut').then(()=>{
-                this.$router.push({
-                    name: 'home'
-                  });
-          })
-       }).catch(()=>{
+				}
+			},
+			logOut() {
+				this.$dialog.confirm({
+					title: '提示',
+					message: '确认退出登录吗？'
+				}).then(() => {
+					this.$store.dispatch('handleLogOut').then(() => {
+						this.$router.push({
+							name: 'home'
+						});
+					})
+				}).catch(() => {
 
-       })
-      }
-      
-  }
-}
+				})
+			}
+
+		}
+	}
 </script>
 
 <style lang="less">
-//text-align: left;
-.van-cell{
-  text-align: left;
-}
-.user {
-  &-poster {
-    width: 100%;
-    height: 53vw;
-    display: block;
-  }
-  &-group {
-    margin-bottom: 15px;
-  }
-  &-links {
-    padding: 15px 0;
-    font-size: 12px;
-    text-align: center;
-    background-color: #fff;
-    .van-icon {
-      display: block;
-      font-size: 24px;
-    }
-  }
-}
+	//text-align: left;
+	.van-cell {
+		text-align: left;
+	}
+
+	.ucenter-top {
+		height: 10rem;
+		background-color: #66c6f2;
+		position: relative;
+		top: 0;
+		left: 0;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.ucenter-user-head {
+		width: 4rem;
+		height: 4rem;
+		background-color: aliceblue;
+		border-radius: 2rem;
+		text-align: center;
+		margin: 0 auto;
+	}
+
+	.user {
+		&-poster {
+			width: 100%;
+			height: 53vw;
+			display: block;
+		}
+
+		&-group {
+			margin-bottom: 15px;
+		}
+
+		&-links {
+			padding: 15px 0;
+			font-size: 12px;
+			text-align: center;
+			background-color: #fff;
+
+			.van-icon {
+				display: block;
+				font-size: 24px;
+			}
+		}
+	}
 </style>

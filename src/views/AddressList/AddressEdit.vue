@@ -91,7 +91,7 @@
 					addressInfo: this.addressInfo
 				}
 				this.btnDisabled = true;
-				this.showLoaddingToast('提交中...');
+				this.showLoadingToast('提交中...');
 				if (!this.query.edit) {
 					this.$store.dispatch("setAddressSave", params).then((res) => {
 						this.btnDisabled = false;
