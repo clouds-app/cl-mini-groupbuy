@@ -141,7 +141,7 @@
 						addressId: this.addressInfo.id2
 					}
 					this.btnDisabled = true;
-					this.showLoadingToast('提交中...');
+					this.showLoaddingToast('提交中...');
 					this.$store.dispatch("setAddressDelete", params).then((res) => {
 						this.btnDisabled = false;
 						this.closeLoaddingToast();

@@ -16,33 +16,24 @@
         </van-swipe>
       </van-row>
       <van-row style="margin:10px,0px">
-				<!-- <van-notice-bar mode="link" v-for="(item,index) in noteList" :key="index" :text="item.noteTitle"
+				<van-notice-bar v-for="(item,index) in noteList" :key="index" :text="item.noteTitle"
 					left-icon="volume-o" scrollable
-				>
-        </van-notice-bar> -->
-       <van-notice-bar left-icon="volume-o" mode="link">
-        <span @click="showDetail(item.id1)" v-for="(item,index) in noteList" :key="index">{{item.noteTitle}}</span> 
-      </van-notice-bar>
+				/>
       </van-row>
 
      <div class="aui-palace">
 		   信息列表
 		</div>
-   	<van-row style="margin-bottom:30px;">
-                <van-col span="12" v-for="(item,index) in navImages" :key="index">
-                  <img :src="imgUrlFilter(item.adverImg)"/>
-                </van-col>
-   </van-row >
-   <!-- <van-collapse value="1" accordion>
-  <van-collapse-item title="信息列表" name="1">
-   
-  </van-collapse-item>
-</van-collapse> -->
-
+		<van-row>
+				<van-col span="12" v-for="(item,index) in navImages" :key="index">
+					<img :src="imgUrlFilter(item.adverImg)"/>
+				</van-col>
+		</van-row>
    </div>
 </template>
 
 <script>
+import CountDown from 'vue2-countdown'
 import common from '@/views/mixins/common.js';
 export default {
   name: 'home',
@@ -56,6 +47,7 @@ export default {
   },
 	mixins: [common],
   components: {
+		CountDown
   },
 	mounted:function(){
     //console.warn("this.$route.params"+JSON.stringify(this.$route.params))
@@ -68,16 +60,6 @@ export default {
 		});
 	},
   methods:{
-      showDetail(adId){
-        let params={
-          id:adId
-        }
-        this.$store.dispatch('getAdDetailById',params).then(res=>{
-              	document.write(res.noteContent);
-        }).catch(err=>{
-          this.showErrorNotify(err);
-        })
-      },
 			imgUrlFilter(value){
 				return   this.$config.baseImgUrl + value;
 			},

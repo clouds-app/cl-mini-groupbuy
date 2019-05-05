@@ -28,17 +28,11 @@
      <div class="aui-palace">
 		   信息列表
 		</div>
-   	<van-row style="margin-bottom:30px;">
-                <van-col span="12" v-for="(item,index) in navImages" :key="index">
-                  <img :src="imgUrlFilter(item.adverImg)"/>
-                </van-col>
-   </van-row >
-   <!-- <van-collapse value="1" accordion>
-  <van-collapse-item title="信息列表" name="1">
-   
-  </van-collapse-item>
-</van-collapse> -->
-
+		<van-row>
+				<van-col span="12" v-for="(item,index) in navImages" :key="index">
+					<img :src="imgUrlFilter(item.adverImg)"/>
+				</van-col>
+		</van-row>
    </div>
 </template>
 
