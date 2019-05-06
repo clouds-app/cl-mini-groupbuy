@@ -29,7 +29,7 @@
 		   信息列表
 		</div>
    	<van-row style="margin-bottom:30px;">
-                <van-col class="goodsDesc" span="12" v-for="(item,index) in navImages" :key="index">
+                <van-col span="12" v-for="(item,index) in navImages" :key="index">
                   <img :src="imgUrlFilter(item.adverImg)" @click="handleLink(item.adverUrl)"/>
                 </van-col>
    </van-row >
@@ -126,11 +126,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.goodsDesc img{                 
-   width: auto;                 
-   height:auto;                 
-   max-height: 100%;                 
-   max-width: 100%;} 
 
 .aui-palace {
     padding: 5,0;

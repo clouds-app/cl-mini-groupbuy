@@ -65,11 +65,11 @@ export default {
       currentActive: 0,
       goodsDataList: {},
       goodsType: -1,
-      // pageConfig: {
-      //   pageNumber: 1,
-      //   pageSize: 10,
-      //   totalItems: 0
-      // },
+      pageConfig: {
+        pageNumber: 1,
+        pageSize: 10,
+        totalItems: 0
+      },
       categoryList: {},
       bounce: {
         bottom: true
