@@ -1,6 +1,6 @@
 <template>
   <div>
-   <back-arrow title="用户登录"/>
+   <!-- <back-arrow title="用户登录"/> -->
   <van-cell-group>
     <van-field
       v-model="form.username"
@@ -24,7 +24,7 @@
     />
 </van-cell-group>
   <div class="form-group">
- <van-button :loading='isLoding' style="margin-right:10px;width:300px;" round type="primary" @click="handleSubmit">登 录</van-button>
+ <van-button :loading='isLoding' style="margin-right:10px;width:250px;" round type="primary" @click="handleSubmit">登 录</van-button>
   <!-- <van-button   style="margin-right:10px" type="default" @click="resetInput">重 置</van-button> -->
   </div>
  

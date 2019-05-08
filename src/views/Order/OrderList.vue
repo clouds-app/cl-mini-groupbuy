@@ -40,17 +40,28 @@
 		},
 		mixins: [common],
 		created: function() {
+			
 			this.loadOrderWaitingPay();
 			this.loadOrderEndPay();
 		},
 		computed: {},
 		mounted:function(){
+			this.checkLogin();
 			var query = this.$route.query;
 			if(query != undefined){
 				this.active = query.active;
 			}
 		},
 		methods: {
+			checkLogin() {
+				//debugger
+				// if (this.checkLogin()) {
+				// 	this.$router.push({
+				// 		name: 'login'
+				// 	});
+
+				// }
+			},
 			getBaseImgUrl(value) {
 				var img = JSON.parse(value);
 				return this.$config.baseImgUrl + img[0];

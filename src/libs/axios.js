@@ -1,5 +1,6 @@
 import axios from 'axios'
-//import store from '@/store'
+import defaultSetting from '@/config'
+import store from '@/store'
 // import { Spin } from 'iview'
 const addErrorLog = errorInfo => {
   const { statusText, status, request: { responseURL } } = errorInfo
@@ -32,7 +33,7 @@ class HttpRequest {
       // Spin.hide()
     }
   }
-  interceptors (instance, url) {
+  interceptors (instance, url){
     // 请求拦截
     instance.interceptors.request.use(config => {
       // 添加全局的loading...
@@ -46,7 +47,15 @@ class HttpRequest {
     })
     // 响应拦截
     instance.interceptors.response.use(res => {
-      //console.warn(res)
+  
+			if(res.data.status == 443){
+        store.dispatch('handleLogOut')
+        // Window.vm.$router.push({
+				// 	path: '/login'
+        // });
+        window.location.href= defaultSetting.baseUrl;
+				return;
+			}
       this.destroy(url)
       const { data, status } = res
       return { data, status }

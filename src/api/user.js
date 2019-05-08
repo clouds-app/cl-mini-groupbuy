@@ -104,12 +104,20 @@ export const getUserInfo = (token) => {
 }
 
 /**
-* @description 用户退出--暂时无此接口
+* @description 用户退出--
 */
-export const logout = (token) => {
+export const logout = () => {
+   //参数
+   const data = {
+  }
   return axios.request({
-    url: 'logout',
-    method: 'post'
+    url: '/api/user/loginOut',
+    data,
+    method: 'post',
+    transformRequest: [function (data) {
+      // 对 data 进行任意转换处理
+      return Qs.stringify(data)
+    }],
   })
 }
 

@@ -101,19 +101,16 @@ export default {
     // 退出登录
     handleLogOut ({ state, commit }) {
       return new Promise((resolve, reject) => {
-        // logout(state.token).then(() => {
-        //   commit('setToken', '')
-        //   commit('setUserId',data.data.USERID);
-        //   commit('setUserName',data.data.USERNAME);
-        //   resolve()
-        // }).catch(err => {
-        //   reject(err)
-        // })
+        logout().then(() => {
+          commit('setToken', '')
+          commit('setUserId','');
+          commit('setUserName','');
+          resolve()
+        }).catch(err => {
+          reject(err)
+        })
         // 如果你的退出登录无需请求接口，则可以直接使用下面三行代码而无需使用logout调用接口
-        commit('setToken', '')
-        commit('setUserId','');
-        commit('setUserName','');
-        resolve()
+      
       })
     },
     // 获取用户相关信息
