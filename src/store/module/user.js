@@ -100,6 +100,7 @@ export default {
     },
     // 退出登录
     handleLogOut ({ state, commit }) {
+      //debugger
       return new Promise((resolve, reject) => {
         logout().then(() => {
           commit('setToken', '')

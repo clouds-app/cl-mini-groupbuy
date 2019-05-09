@@ -47,18 +47,22 @@ class HttpRequest {
     })
     // 响应拦截
     instance.interceptors.response.use(res => {
-  
+      //debugger
 			if(res.data.status == 443){
-        store.dispatch('handleLogOut')
+        store.dispatch('handleLogOut').then(res=>{
+          let rediretUrl ='http://'+window.location.host+'/#/login'
+          window.location.href = rediretUrl //defaultSetting.baseUrl.pro
+        })
         // Window.vm.$router.push({
 				// 	path: '/login'
         // });
-        window.location.href= defaultSetting.baseUrl;
 				return;
-			}
-      this.destroy(url)
-      const { data, status } = res
-      return { data, status }
+      }else{
+          this.destroy(url)
+          const { data, status } = res
+          return { data, status }
+      }
+   
     }, error => {
       this.destroy(url)
       addErrorLog(error.response)

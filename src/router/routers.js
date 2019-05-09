@@ -127,7 +127,7 @@ export default [
     path: '/OrderList',
     name: 'orderList',
     meta:{
-      isLogin: false,
+      isLogin: true,
       title:'订单列表',
     },
     component: () => import(/* webpackChunkName: "AddressList" */ '@/views/Order/OrderList.vue')

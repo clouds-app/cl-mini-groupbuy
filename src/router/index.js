@@ -30,27 +30,31 @@ router.beforeEach((to, from, next) => {
    // 设置页面标题，方便搜索
     document.title =getPageTitle(to.meta.title)
     //debugger
-    // if (hasToken){
-    //   if (to.path === '/login'|| to.path === '/register') {
-    //     // if is logged in, redirect to the home page
-    //     next({ path: '/home' })
-    //     NProgress.done()
-    //   }else{
-    //      /* has no token*/
-    //   next()
-    //   // finish progress bar
-    //   NProgress.done()
-    //   }
-    // }else{
-    //   /* has no token*/
-    //   next()
-    //   // finish progress bar
-    //   NProgress.done()
-    // }  
+    if (hasToken){
+      if (to.path === '/login' || to.path === '/register') {
+        // if is logged in, redirect to the home page
+        next({ path: '/home' })
+        NProgress.done()
+      }else{
+        next()
+        NProgress.done()
+      }
+    }else{
+      /* has no token*/
+      if(to.meta.isLogin){
+        next({ path: '/login' })
+        NProgress.done()
+      }
+      else{
+        next()
+        NProgress.done()
+      }
+    
+    }  
+
      /* has no token*/
-     next()
-     // finish progress bar
-     NProgress.done()
+    //  next()
+    //  NProgress.done()
    })
 
 //路由拦截，页面控制
