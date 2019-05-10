@@ -21,11 +21,10 @@ const LOGIN_PAGE_NAME = 'login'
 
 const whiteList = ['/login', '/register'] // no redirect whitelist
   // determine whether the user has logged in
-
+const hasToken = getCookie('userName')
 
 //路由拦截，权限控制
 router.beforeEach((to, from, next) => {
-  const hasToken = getCookie('userName')
    // start progress bar
    NProgress.start()
    // 设置页面标题，方便搜索

@@ -430,7 +430,7 @@ export default {
         //立即购买按钮
         purchase(){
              //debugger
-            if(true)
+            if(this.checkLogin())
             {
                 let _self=this;
                 let tempAddrDetail = Object.assign({},this.$store.state.address.tempAddressDetail)

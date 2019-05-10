@@ -13,7 +13,7 @@
          <div>
          <van-cell-group>
             <van-cell v-if="hasRush && sourceType=='rusnNow'" title="结束时间" >
-                 <van-tag plain  type="danger" > <count-down  :time="endTime.replace(/\-/g, '/')" :callback="TimeOutCallback" ></count-down > </van-tag>
+                 <van-tag plain  type="danger" > <count-down  :time="endTime" :callback="TimeOutCallback" ></count-down > </van-tag>
             </van-cell>
             <van-cell title="商品名称" :value="goodsItem.goodsName" />
            
@@ -430,7 +430,7 @@ export default {
         //立即购买按钮
         purchase(){
              //debugger
-            if(true)
+            if(this.checkLogin())
             {
                 let _self=this;
                 let tempAddrDetail = Object.assign({},this.$store.state.address.tempAddressDetail)

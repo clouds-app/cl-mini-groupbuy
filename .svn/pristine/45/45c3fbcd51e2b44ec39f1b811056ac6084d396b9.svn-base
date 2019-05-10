@@ -7,7 +7,7 @@ import {
   getUserInfo,
 	userChangePassword
 } from '@/api/user'
-import { setToken, getToken,setCookie,getCookie,removeCookie} from '@/libs/util'
+import { setToken, getToken,setCookie,getCookie} from '@/libs/util'
 import { GetGuid } from '@/libs/tools'
 const serverBusyTips="服务繁忙，请稍后再试！";
 export default {
@@ -28,7 +28,6 @@ export default {
 			setCookie('userId',id);
     },
     setUserName (state, name) {
-      //debugger
       state.userName = name;
 			setCookie('userName',name);
     },
@@ -78,7 +77,7 @@ export default {
           username,
           password
         }).then(res => {
-            //console.warn(res)
+            console.warn(res)
           const data = res.data
           if(data.success)
           {
@@ -101,16 +100,12 @@ export default {
     },
     // 退出登录
     handleLogOut ({ state, commit }) {
-        commit('setToken', '')
-        commit('setUserId','');
-        commit('setUserName','');
-        removeCookie('userName'); 
-        removeCookie('userId'); 
+      //debugger
       return new Promise((resolve, reject) => {
         logout().then(() => {
-          // commit('setToken', '')
-          // commit('setUserId','');
-          // commit('setUserName','');
+          commit('setToken', '')
+          commit('setUserId','');
+          commit('setUserName','');
           resolve()
         }).catch(err => {
           reject(err)

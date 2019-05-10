@@ -46,7 +46,7 @@
 		},
 		computed: {},
 		mounted:function(){
-			//this.checkLogin();
+			this.checkLogin();
 			var query = this.$route.query;
 			if(query != undefined){
 				this.active = query.active;

@@ -47,9 +47,8 @@ class HttpRequest {
     })
     // 响应拦截
     instance.interceptors.response.use(res => {
-      //
+      //debugger
 			if(res.data.status == 443){
-        //debugger
         store.dispatch('handleLogOut').then(res=>{
           let rediretUrl ='http://'+window.location.host+'/#/login'
           window.location.href = rediretUrl //defaultSetting.baseUrl.pro

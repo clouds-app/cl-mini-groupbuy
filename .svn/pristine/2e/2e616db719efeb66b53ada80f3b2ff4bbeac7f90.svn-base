@@ -1,0 +1,178 @@
+import Home from '@/views/Home.vue'
+
+export default [
+  
+ {
+    path: '/',
+    name: 'main',
+    component: Home,
+    meta:{
+      title:'首页'
+    },
+  },
+  {
+    path: '/home',
+    name: 'home',
+    component: Home,
+    meta:{
+      title:'首页'
+    },
+
+  },
+  {
+    path: '/addetail',
+    name: 'addetail',
+    meta: { title: '公告详细' },
+    component: () => import(/* webpackChunkName: "UserCenter" */ '@/views/AdDetail.vue'),
+  },
+  {
+    path: '/usercenter',
+    name: 'usercenter',
+    meta:{
+      isLogin: true,
+      title:'用户中心'
+    },
+    component: () => import(/* webpackChunkName: "UserCenter" */ '@/views/UserCenter.vue')
+  },
+  {
+    path: '/login',
+    name: 'login',
+    meta:{
+      isLogin: false,
+      title:'登陆'
+    },
+    component: () => import(/* webpackChunkName: "Login" */ '@/views/Login.vue')
+  },
+  {
+    path: '/register',
+    name: 'register',
+    meta:{
+      isLogin: false,
+      title:'注册'
+    },
+    component: () => import(/* webpackChunkName: "Register" */ '@/views/Register.vue')
+  },
+  {
+    path: '/shopingCart',
+    name: 'shopingCart',
+    meta:{
+      isLogin: true,
+      title:'购物车'
+    },
+    component: () => import(/* webpackChunkName: "ShopingCart" */ '@/views/ShopingCart/ShopingCart.vue')
+  },
+  {
+    path: '/about',
+    name: 'about',
+    meta:{
+      title:'关于我们'
+    },
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '@/views/About.vue')
+  },
+  {
+    path: '/category',
+    name: 'category',
+    meta:{
+      title:'分类'
+    },
+    component: () => import(/* webpackChunkName: "Category" */ '@/views/Category/Category.vue')
+  },
+  {
+    path: '/flashsale',
+    name: 'flashsale',
+    meta:{
+      title:'抢购'
+    },
+    component: () => import(/* webpackChunkName: "FlashSale" */ '@/views/FlashSale/FlashSale.vue')
+  },
+  {
+    path: '/goodslist',
+    name: 'goodslist',
+    meta:{
+      title:'商品列表'
+     // keepAlive: true, //此组件需要被缓存 //默认为FALSE 其他可用不用设置
+    },
+    component: () => import(/* webpackChunkName: "AddressList" */ '@/views/GoodsList/GoodsList.vue')
+  },
+  {
+    path: '/goodsdetail',
+    name: 'goodsdetail',
+    meta:{
+      title:'商品详细',
+      footer:true,  //默认为FALSE 其他可用不用设置
+			isLogin: true
+    },
+    component: () => import(/* webpackChunkName: "GoodsDetail" */ '@/views/GoodsDetail.vue')
+  },
+  {
+    path: '/addresslist',
+    name: 'addresslist',
+    meta:{
+      isLogin: true,
+      title:'地址列表',
+    },
+    component: () => import(/* webpackChunkName: "AddressList" */ '@/views/AddressList/AddressList.vue')
+  },{
+    path: '/addressedit',
+    name: 'addressedit',
+    meta:{
+      isLogin: true,
+      title:'地址编辑',
+    },
+    component: () => import(/* webpackChunkName: "AddressList" */ '@/views/AddressList/AddressEdit.vue')
+  },{
+    path: '/OrderList',
+    name: 'orderList',
+    meta:{
+      isLogin: true,
+      title:'订单列表',
+    },
+    component: () => import(/* webpackChunkName: "AddressList" */ '@/views/Order/OrderList.vue')
+  },{
+    path: '/changePassword',
+    name: 'changePassword',
+    meta:{
+      isLogin: true,
+      title:'修改密码',
+    },
+    component: () => import(/* webpackChunkName: "AddressList" */ '@/views/user/changePassword.vue')
+  },
+  {
+    path: '/payment',
+    name: 'payment',
+    meta:{
+      isLogin: true,
+      title:'付款',
+    },
+    component: () => import(/* webpackChunkName: "payment" */ '@/views/Order/payment.vue')
+  },{
+    path: '/paySuccess',
+    name: 'paySuccess',
+    meta:{
+      isLogin: false,
+      footer:true,
+      title:'付款成功',
+    },
+    component: () => import(/* webpackChunkName: "payment" */ '@/views/Pay/PaySuccess.vue')
+  },{
+    path: '/payFail',
+    name: 'payFail',
+    meta:{
+      isLogin: false,
+      footer:true,
+      title:'付款失败',
+    },
+    component: () => import(/* webpackChunkName: "payment" */ '@/views/Pay/PayFail.vue')
+  },
+  {
+    path: '*',
+    name: 'err404',
+    meta:{
+      title:'404',
+    },
+    component: () => import(/* webpackChunkName: "err404" */ '@/views/Err404.vue')
+  }
+]
