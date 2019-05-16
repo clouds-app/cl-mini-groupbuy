@@ -10,8 +10,8 @@
         @click="handleGoodsDetail(goods)"
       >
         <div slot="tags" v-if="isFlash || isFlashAfter" class="card__tags">
-          <van-tag v-if="isFlashAfter" plain type="danger"> <count-down :time="startTime.replace(/\-/g, '/')" :callback="TimeUpCallback" ></count-down ></van-tag>
-          <van-tag v-if="isFlash" plain  type="danger" > <count-down  :time="endTime.replace(/\-/g, '/')" :callback="TimeOutCallback" ></count-down > </van-tag>
+          <van-tag v-if="isFlashAfter" plain type="danger"> <count-down :time="formatData(goods.rushStart)" :callback="TimeUpCallback" ></count-down ></van-tag>
+          <van-tag v-if="isFlash" plain  type="danger" > <count-down  :time="formatData(goods.rushEnd)" :callback="TimeOutCallback" ></count-down > </van-tag>
         </div>
         <div  slot="footer"  class="card__footer" v-if="isFlash">
           <van-button  round  type="danger" size="mini" v-show="!isDone"> 马上抢 </van-button>
@@ -63,6 +63,13 @@ export default {
 
     },
     methods:{
+      formatData(val){
+       // debugger
+        if(val!='' && val!=null)
+        {
+            return val.replace(/\-/g, '/')
+        }
+      },
        TimeUpCallback(){
          this.$emit('TimeUpCallback')
        },
@@ -77,11 +84,11 @@ export default {
       getGoodsPrice(goodsItem){
         if(goodsItem!=null)
         {    //debugger
-             if(this.dataFrom!=type.dataFrom_category)
-             {
-                 this.startTime =goodsItem.rushStart
-                 this.endTime =goodsItem.rushEnd
-             }
+            //  if(this.dataFrom!=type.dataFrom_category)
+            //  {
+            //      this.startTime =goodsItem.rushStart
+            //      this.endTime =goodsItem.rushEnd
+            //  }
            
              if(this.dataFrom!=type.dataFrom_rusnNow && this.dataFrom!=type.dataFrom_rushAfter)
              {
