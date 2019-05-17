@@ -1,0 +1,158 @@
+<template>
+	<div>
+		<back-arrow title="订单详情" />
+		<div>
+			<van-card style="text-align: left;"  :num="orderItem.order.paperNum" :tag="orderItem.order.orderType==2?'抢购':''"
+			 :title="orderItem.order.goodsName" :desc="orderItem.order.goodsSpec" :thumb="getBaseImgUrl(orderItem.goods.goodsImg)">
+			</van-card>
+			
+			<div class="detail-box">
+				<p>
+					<label>订单遍号:</label>
+					{{orderItem.order.no}}
+				</p>
+				<p>
+					<label>下单日期:</label>
+					{{orderItem.order.createTime}}
+				</p>
+				<div class="border"></div>
+				<p>
+					<label>纸长:</label>
+					{{orderItem.order.paperLength}}mm
+				</p>
+				<p>
+					<label>纸宽:</label>
+					{{orderItem.order.paperWidth}}mm
+				</p>
+				<p>
+					<label>数量:</label>
+					{{orderItem.order.paperNum}}
+				</p>
+				<p>
+					<label>箱高:</label>
+					{{orderItem.order.boxHeight?'':orderItem.order.boxHeight+'mm'}}
+				</p>
+				<p>
+					<label>压线:</label>
+					{{orderItem.order.paperYx}}
+				</p>
+				<p>
+					<label>压线类型:</label>
+					{{orderItem.order.yxType}}
+				</p>
+				<p>
+					<label>送货备注:</label>
+					{{orderItem.order.deliveryRemark}}
+				</p>
+				<p>
+					<label>生产备注:</label>
+					{{orderItem.order.productionRemark}}
+				</p>
+				<div class="border"></div>
+				<p>
+					<label>订单金额:</label>
+					{{orderItem.order.payPrice}}
+				</p>
+				<p v-if="orderItem.order.payType">
+					<label>支付方式:</label>
+					{{orderItem.order.payType=='1'?'微信支付':'支付宝'}}
+				</p>
+				<p v-if="orderItem.order.payDate">
+					<label>支付时间:</label>
+					{{orderItem.order.payDate}}
+				</p>
+				<div class="border"></div>
+				<p>
+					<label>收货人:</label>
+					{{orderItem.address.name}}&nbsp;&nbsp;{{orderItem.address.phoneNo}}
+				</p>
+				<p>
+					<label>收货地址:</label>
+					{{orderItem.address.province+orderItem.address.city+orderItem.address.county+orderItem.address.address}}
+				</p>
+				<div class="border"></div>
+				<p v-if="orderItem.order.status == 0" style="text-align: right;">
+					<label style="color: red;">¥{{orderItem.order.payPrice}}</label>
+					&nbsp;&nbsp;&nbsp;&nbsp;<van-button @click="orderPay" size="mini" type="danger" round >&nbsp;&nbsp;立即支付&nbsp;&nbsp;</van-button>
+				</p>
+			</div>
+		</div>
+	</div>
+</template>
+
+<script>
+	import BackArrow from '_c/back-arrow'
+	import common from '@/views/mixins/common.js';
+	export default {
+		name: '',
+		data() {
+			return {
+				orderNo:'',
+				orderItem:{
+					address:{},
+					order:{}
+				}
+			}
+		},
+		components: {
+			BackArrow
+		},
+		mixins: [common],
+		created: function() {
+			this.orderNo = this.$route.query.orderNo;
+			this.loadOrderDetail();
+		},
+		computed: {},
+		mounted: function() {
+			
+		},
+		methods: {
+			loadOrderDetail(){
+				this.$store.dispatch('getOrderDetail', {orderNo: this.orderNo}).then(data => {
+					this.orderItem = data;
+				})
+			},getDescInfo(item) {
+				return '纸长:' + item.paperLength + ' 纸宽:' + item.paperWidth
+			},getBaseImgUrl(value) {
+				if(value){
+					let img = JSON.parse(value);
+					return this.$config.baseImgUrl + img[0];
+				}
+				return '';
+			},orderPay(){
+				 this.$router.push({
+				  path:'/payment',
+				  query:{
+					  orderNo:this.orderItem.order.no,
+					  orderPrice:this.orderItem.order.payPrice
+				  }
+				})
+			}
+		}
+	}
+	
+	
+</script>
+
+<style>
+	.van-card__content{
+		height: 70px;
+	}
+	.van-card__thumb{
+		width: 70px;
+		height: 70px;
+	}
+	.detail-box{
+		text-align: left;
+    padding: 0.5rem;
+    color: black;
+    font-size: 0.75rem;
+	    background-color: #fff;
+	}
+	.detail-box label{
+		font-weight: bolder;
+	}
+	.border{
+		border-top: 1px solid #f8f8f8;
+	}
+</style>

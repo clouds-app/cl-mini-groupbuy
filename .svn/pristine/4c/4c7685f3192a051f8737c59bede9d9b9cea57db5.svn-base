@@ -29,7 +29,7 @@
 
 
        <van-collapse style="margin-bottom:50px" v-model="activeNames">
-            <van-collapse-item title="商品详细" name="1">
+            <van-collapse-item title="商品详细" name="2">
               <div class="goodsDesc" v-html="goodsItem.goodsDesc"></div>
             </van-collapse-item>
          
@@ -91,7 +91,7 @@
                 <van-radio-group v-model="skuForm.specId">
                 <van-cell-group>
 
-                  <van-cell v-for="(item, index) in goodsSpec" :title=" item.specList.toString() +' ￥' +item.price" :key="index"  @click="handleSelectSpec(item)">
+                  <van-cell v-for="(item, index) in goodsSpec" :title=" item.specList.toString() +' ,￥' +item.price" :key="index"  @click="handleSelectSpec(item)">
                     <van-radio :name="item.id" @click="handleSelectSpec(item)" />
                   </van-cell>
                
@@ -740,17 +740,17 @@ export default {
            //console.warn(res.data);
            _self.addressList = res.data
            let addressDetail =_self.addressList.filter(item=>{
-             return item.defaultAds == true
+             return item.defaultAds ==true
            })
            if(addressDetail.length>0)
            {
-              _self.skuForm.deliveryAddress =addressDetail[0].id2;
-              _self.defaultAddress =addressDetail[0].name+" "+addressDetail[0].phoneNo+" "+addressDetail[0].address;
+              _self.skuForm.deliveryAddress =addressDetail[0].id1
+              _self.defaultAddress =addressDetail[0].name+" "+addressDetail[0].phoneNo+" "+addressDetail[0].address
            }
            else
            {
-             _self.skuForm.deliveryAddress =_self.addressList[0].id2;
-             _self.defaultAddress =_self.addressList[0].name+" "+_self.addressList[0].phoneNo+" "+_self.addressList[0].address;
+             _self.skuForm.deliveryAddress =_self.addressList[0].id1
+             _self.defaultAddress =_self.addressList[0].name+" "+_self.addressList[0].phoneNo+" "+_self.addressList[0].address
            }
            
             resolve()

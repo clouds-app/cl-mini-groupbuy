@@ -1,0 +1,152 @@
+<template>
+  <div class="container">
+  <div class="homeContent"> 
+      <div class="companyName"><span >晨龙包装自动化有限公司</span></div>
+       <van-row  >
+         <van-swipe :autoplay="3000" indicator-color="white" :height="150">
+          <van-swipe-item class="goodsDesc"
+            v-for="(image, index) in images"
+            :key="index"
+          >
+            <img style="width:100%;height:100%;" :src="imgUrlFilter(image.adverImg)" @click="handleLink(image.adverUrl)" />
+          </van-swipe-item>
+        </van-swipe>
+      
+      </van-row>
+      <van-row style="margin:10px,0px">
+			
+       <van-notice-bar left-icon="volume-o" mode="link">
+        <span @click="showDetail(item.id1)" v-for="(item,index) in noteList" :key="index">{{item.noteTitle}}</span> 
+      </van-notice-bar>
+      </van-row>
+
+   <!--  <div class="aui-palace">
+		   信息列表
+		</div> -->
+   	<van-row>
+                <van-col style="padding: 0.1rem;" class="goodsDesc" span="12" v-for="(item,index) in navImages" :key="index">
+                  <img :src="imgUrlFilter(item.adverImg)" @click="handleLink(item.adverUrl)"/>
+                </van-col>
+   </van-row >
+    
+   </div>
+   
+  </div>
+  
+</template>
+
+<script>
+import common from '@/views/mixins/common.js';
+export default {
+  name: 'home',
+  data() {
+    return {
+      
+      current: 0,
+      images: [],
+			navImages:[],
+			noteList:[]
+    };
+  },
+	mixins: [common],
+  components: {
+  },
+	mounted:function(){
+    //console.warn("this.$route.params"+JSON.stringify(this.$route.params))
+		this.loadNoteList();
+		this.loadAdList('homeSwipe',(data)=>{
+			this.images = data;
+		});
+		this.loadAdList('homeNav',(data)=>{
+			this.navImages = data;
+		});
+	},
+  methods:{
+      //广告链接
+      handleLink(linkUrl){
+        //debugger
+        if(linkUrl!=null && linkUrl!="")
+        {
+              if(linkUrl.indexOf('http')!=-1){
+                window.open(linkUrl,'_blank');   
+              }else
+              {
+                this.$router.push({
+                  path:linkUrl,
+                })
+            }
+        }
+      },
+      showDetail(adId){
+        let params={
+          id:adId
+        }
+        this.$store.dispatch('getAdDetailById',params).then(res=>{
+              //	document.write(res.noteContent);
+              this.$router.push({
+                path:`/addetail?id=${adId}`,
+              })
+        }).catch(err=>{
+          this.showErrorNotify(err);
+        })
+      },
+			imgUrlFilter(value){
+				return   this.$config.baseImgUrl + value;
+			},
+      loadNoteList(){
+				let params = {
+					pageNumber : 1,
+					pageSize:1
+				}
+				this.$store.dispatch("getNoteList", params).then((res) => {
+					if (res.success) {
+						this.noteList = res.data.records;
+					}
+				}).catch((msg) => {
+					this.showErrorNotify(msg);
+				});
+			},
+			loadAdList(adLocation,callback){
+				let params = {
+					adLocation : adLocation
+				}
+				this.$store.dispatch("getAdList", params).then((res) => {
+					if (res.success) {
+							callback(res.data);
+					}
+				}).catch((msg) => {
+					this.showErrorNotify(msg);
+				});
+			}
+  }
+}
+</script>
+
+<style lang="less" scoped>
+.aui-palace{
+  margin: 5px;
+}
+.companyName{
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+.goodsDesc img{                 
+   width: auto;                 
+   height:auto;                 
+   max-height: 100%;                 
+   max-width: 100%;} 
+
+.aui-palace {
+    padding: 5,0;
+    position: relative;
+    overflow: hidden;
+}
+
+
+.controlPanel{
+  height: 20px;
+  text-align: center;
+}
+</style>

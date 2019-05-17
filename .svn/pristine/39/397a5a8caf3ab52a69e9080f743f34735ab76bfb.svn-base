@@ -157,10 +157,11 @@ export default {
 //       text-align: justify;
 //       font-weight: 800;
 //   }
-  .van-card__price {
-     font-size: 18px;
-     font-weight: bold;
-}
+//   .van-card__price {
+//     color: #ef4f4f;
+//     font-size: 15px;
+//     font-weight: 600;
+// }
     .van-card {
         text-align: left;
     }

@@ -29,7 +29,7 @@
 
 
        <van-collapse style="margin-bottom:50px" v-model="activeNames">
-            <van-collapse-item title="商品详细" name="1">
+            <van-collapse-item title="商品详细" name="2">
               <div class="goodsDesc" v-html="goodsItem.goodsDesc"></div>
             </van-collapse-item>
          
@@ -91,7 +91,7 @@
                 <van-radio-group v-model="skuForm.specId">
                 <van-cell-group>
 
-                  <van-cell v-for="(item, index) in goodsSpec" :title=" item.specList.toString() +' ￥' +item.price" :key="index"  @click="handleSelectSpec(item)">
+                  <van-cell v-for="(item, index) in goodsSpec" :title=" item.specList.toString() +' ,￥' +item.price" :key="index"  @click="handleSelectSpec(item)">
                     <van-radio :name="item.id" @click="handleSelectSpec(item)" />
                   </van-cell>
                
