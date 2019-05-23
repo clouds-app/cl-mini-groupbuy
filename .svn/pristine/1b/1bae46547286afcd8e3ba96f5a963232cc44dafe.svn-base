@@ -92,17 +92,9 @@
             <van-collapse-item title="规格" name="1">
                 <van-radio-group v-model="skuForm.specId">
                 <van-cell-group>
-                  
-                  <van-cell v-for="(item, index) in goodsSpec"  :key="index"  @click="handleSelectSpec(item)">
-                     <template slot="title">
-                        <van-row>
-                          <van-col span="16">{{item.specList.toString()}}</van-col>
-                          <van-col span="6" style="color:red">{{' ￥' +item.price}}</van-col>
-                          <van-col span="2">
-                              <van-radio :name="item.id" @click="handleSelectSpec(item)" />
-                          </van-col>
-                      </van-row>
-                      </template>
+
+                  <van-cell v-for="(item, index) in goodsSpec" :title=" item.specList.toString() +' ￥' +item.price" :key="index"  @click="handleSelectSpec(item)">
+                    <van-radio :name="item.id" @click="handleSelectSpec(item)" />
                   </van-cell>
                
                 </van-cell-group>
