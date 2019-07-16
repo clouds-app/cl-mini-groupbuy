@@ -1,5 +1,5 @@
 # cl-mini-groupbuy
-
+test
 ## Project setup
 ```
 npm install
