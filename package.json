@@ -14,7 +14,7 @@
     "core-js": "^2.6.5",
     "js-cookie": "^2.2.0",
     "nprogress": "^0.2.0",
-    "vant": "^1.6.15",
+    "vant": "^2.1.8",
     "vue": "^2.6.10",
     "vue-router": "^3.0.3",
     "vue2-countdown": "^1.0.8",
